@@ -111,6 +111,20 @@ window.triggerPelicanEmotion = function (isHappyEmotion) {
   }
 };
 
+/* 🔔 메시지 기반 감정 제어 */
+window.addEventListener('message', (event) => {
+  const data = event.data;
+  if (!data || data.type !== 'pet-emotion') {
+    return;
+  }
+
+  if (data.mood === 'happy') {
+    window.triggerPelicanEmotion(true);
+  } else if (data.mood === 'angry') {
+    window.triggerPelicanEmotion(false);
+  }
+});
+
 /* 🎈 애니메이션 */
 let clock = new THREE.Clock();
 

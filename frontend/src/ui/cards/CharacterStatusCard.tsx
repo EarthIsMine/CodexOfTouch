@@ -1,7 +1,7 @@
 "use client";
 
 import styled from "@emotion/styled";
-import { useMemo } from "react";
+import { useEffect, useMemo, useRef } from "react";
 
 export type CharacterStatusCardProps = {
   title: string;
@@ -38,6 +38,38 @@ export default function CharacterStatusCard({
     return characterHtmlUrl || "";
   }, [characterHtmlUrl]);
 
+  const iframeRef = useRef<HTMLIFrameElement | null>(null);
+
+  useEffect(() => {
+    if (!viewerUrl) {
+      return;
+    }
+    const origin = (() => {
+      try {
+        return new URL(viewerUrl).origin;
+      } catch {
+        return "*";
+      }
+    })();
+
+    const handlePetResult = (event: Event) => {
+      const detail = (event as CustomEvent<{ result?: string }>).detail;
+      if (!detail?.result) {
+        return;
+      }
+      const mood = detail.result === "SUCCESS" ? "happy" : "angry";
+      iframeRef.current?.contentWindow?.postMessage(
+        { type: "pet-emotion", mood },
+        origin,
+      );
+    };
+
+    window.addEventListener("codex:pet-result", handlePetResult);
+    return () => {
+      window.removeEventListener("codex:pet-result", handlePetResult);
+    };
+  }, [viewerUrl]);
+
   return (
     <HeroCard>
       <HeroTop>
@@ -58,6 +90,7 @@ export default function CharacterStatusCard({
         <Cylinder aria-hidden>
           {viewerUrl ? (
             <CharacterFrame
+              ref={iframeRef}
               src={viewerUrl}
               title={`${characterName} 3D Viewer`}
             />

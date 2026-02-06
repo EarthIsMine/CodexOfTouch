@@ -139,9 +139,13 @@ export default function GameLayout({ children }: { children: ReactNode }) {
 
       window.dispatchEvent(new CustomEvent("codex:refresh-home-stats"));
 
-      showToast(
-        payload.data.result === "SUCCESS" ? t("cta.petSuccess") : t("cta.petFail"),
+      const isSuccess = payload.data.result === "SUCCESS";
+      window.dispatchEvent(
+        new CustomEvent("codex:pet-result", {
+          detail: { result: isSuccess ? "SUCCESS" : "FAIL" },
+        }),
       );
+      showToast(isSuccess ? t("cta.petSuccess") : t("cta.petFail"));
     } catch {
       showToast(t("cta.petFailed"));
     } finally {
