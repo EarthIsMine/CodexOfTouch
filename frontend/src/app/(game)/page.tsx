@@ -21,6 +21,8 @@ export default function HomePage() {
   const [jackpotRemainingSec, setJackpotRemainingSec] = useState(
     FALLBACK_JACKPOT_SECONDS,
   );
+  const [activeCharacterId, setActiveCharacterId] = useState(0);
+  const [isJackpotLive, setIsJackpotLive] = useState(false);
   const [poolAmount, setPoolAmount] = useState(FALLBACK_JACKPOT_POOL);
   const [characterName, setCharacterName] = useState("");
   const [characterImageUrl, setCharacterImageUrl] = useState("");
@@ -41,6 +43,7 @@ export default function HomePage() {
       const payload = (await response.json()) as {
         ok: boolean;
         data?: {
+          characterId: number;
           characterName: string;
           characterImageUrl: string;
           jackpotPool: number;
@@ -53,11 +56,13 @@ export default function HomePage() {
         return;
       }
 
+      setActiveCharacterId(payload.data.characterId);
       setJackpotPool(payload.data.jackpotPool);
       setJackpotRemainingSec(payload.data.jackpot);
       setPoolAmount(payload.data.poolAmount);
       setCharacterName(payload.data.characterName);
       setCharacterImageUrl(payload.data.characterImageUrl);
+      setIsJackpotLive(true);
     } catch {
       // Keep current values when backend route is unavailable.
     }
@@ -179,6 +184,100 @@ export default function HomePage() {
       window.removeEventListener("codex:refresh-home-stats", onRefresh);
     };
   }, [loadHomeStats, loadUserSummary]);
+
+  useEffect(() => {
+    if (!isJackpotLive) {
+      return;
+    }
+
+    const timer = window.setInterval(() => {
+      setJackpotRemainingSec((prev) => (prev > 0 ? prev - 1 : 0));
+    }, 1000);
+
+    return () => {
+      window.clearInterval(timer);
+    };
+  }, [isJackpotLive]);
+
+  useEffect(() => {
+    let socket: WebSocket | null = null;
+    let reconnectTimer: number | null = null;
+    let stopped = false;
+
+    const connect = async () => {
+      try {
+        const response = await fetch("/api/dev/ws-config", {
+          method: "GET",
+          cache: "no-store",
+        });
+        const payload = (await response.json()) as {
+          ok: boolean;
+          data?: {
+            jackpotWsUrl: string;
+          };
+        };
+
+        if (!response.ok || !payload.ok || !payload.data?.jackpotWsUrl || stopped) {
+          return;
+        }
+
+        socket = new WebSocket(payload.data.jackpotWsUrl);
+        socket.onmessage = (event) => {
+          try {
+            const message = JSON.parse(event.data) as {
+              type?: string;
+              characterId?: number;
+              currentPool?: number;
+              timeRemaining?: number;
+            };
+
+            if (message.type !== "jackpot:update") {
+              return;
+            }
+
+            if (
+              activeCharacterId > 0 &&
+              Number(message.characterId ?? 0) !== activeCharacterId
+            ) {
+              return;
+            }
+
+            setJackpotPool(Number(message.currentPool ?? 0));
+            setPoolAmount(Number(message.currentPool ?? 0));
+            setJackpotRemainingSec(Number(message.timeRemaining ?? 0));
+            setIsJackpotLive(true);
+          } catch {
+            // Ignore malformed websocket payloads.
+          }
+        };
+
+        socket.onclose = () => {
+          if (stopped) {
+            return;
+          }
+          reconnectTimer = window.setTimeout(() => {
+            void connect();
+          }, 1000);
+        };
+      } catch {
+        if (stopped) {
+          return;
+        }
+        reconnectTimer = window.setTimeout(() => {
+          void connect();
+        }, 1000);
+      }
+    };
+
+    void connect();
+    return () => {
+      stopped = true;
+      if (reconnectTimer) {
+        window.clearTimeout(reconnectTimer);
+      }
+      socket?.close();
+    };
+  }, [activeCharacterId]);
 
   const formattedJackpotPool = jackpotPool.toLocaleString();
   const formattedPool = poolAmount.toLocaleString();
