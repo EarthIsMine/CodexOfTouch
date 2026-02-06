@@ -148,7 +148,7 @@ export class PetService {
   }
 
   async getPetHistory(userId: string, limit: number = 20, offset: number = 0, characterId?: number) {
-    const where: any = { userId };
+    const where: { userId: string; characterId?: number } = { userId };
     if (characterId) {
       where.characterId = characterId;
     }
