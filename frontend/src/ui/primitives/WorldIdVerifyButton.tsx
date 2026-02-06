@@ -1,6 +1,10 @@
 "use client";
 
-import { IDKitWidget, VerificationLevel, type ISuccessResult } from "@worldcoin/idkit";
+import {
+  IDKitWidget,
+  VerificationLevel,
+  type ISuccessResult,
+} from "@worldcoin/idkit/build/index.js";
 import { useState } from "react";
 import CTAButton from "@/ui/primitives/CTAButton";
 
