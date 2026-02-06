@@ -1,0 +1,415 @@
+{
+  "_type": "export",
+  "__export_format": 4,
+  "__export_date": "2026-02-06T00:00:00.000Z",
+  "__export_source": "insomnia.importers:v0.1.0",
+  "resources": [
+    {
+      "_id": "wrk_codexoftouch",
+      "_type": "workspace",
+      "parentId": null,
+      "name": "CodexOfTouch API",
+      "description": "Petting Roulette Game API - World ID 기반 인터랙션 수집 게임",
+      "scope": "collection"
+    },
+    {
+      "_id": "env_base",
+      "_type": "environment",
+      "parentId": "wrk_codexoftouch",
+      "name": "Base Environment",
+      "data": {
+        "base_url": "http://localhost:3000/api",
+        "token": ""
+      }
+    },
+    {
+      "_id": "env_dev",
+      "_type": "environment",
+      "parentId": "env_base",
+      "name": "Development",
+      "data": {
+        "base_url": "http://localhost:3000/api",
+        "token": ""
+      }
+    },
+    {
+      "_id": "env_prod",
+      "_type": "environment",
+      "parentId": "env_base",
+      "name": "Production",
+      "data": {
+        "base_url": "https://your-production-url.com/api",
+        "token": ""
+      }
+    },
+
+    {
+      "_id": "fld_health",
+      "_type": "request_group",
+      "parentId": "wrk_codexoftouch",
+      "name": "Health",
+      "description": "서버 상태 확인"
+    },
+    {
+      "_id": "req_health_check",
+      "_type": "request",
+      "parentId": "fld_health",
+      "name": "Health Check",
+      "method": "GET",
+      "url": "{{ _.base_url }}/health",
+      "headers": [],
+      "body": {},
+      "parameters": []
+    },
+    {
+      "_id": "req_api_root",
+      "_type": "request",
+      "parentId": "fld_health",
+      "name": "API Root",
+      "method": "GET",
+      "url": "{{ _.base_url }}",
+      "headers": [],
+      "body": {},
+      "parameters": []
+    },
+
+    {
+      "_id": "fld_auth",
+      "_type": "request_group",
+      "parentId": "wrk_codexoftouch",
+      "name": "Auth",
+      "description": "인증 (World ID)"
+    },
+    {
+      "_id": "req_auth_worldid",
+      "_type": "request",
+      "parentId": "fld_auth",
+      "name": "World ID 인증",
+      "description": "World ID proof로 인증 후 JWT 토큰 발급. 응답의 token 값을 환경변수 token에 설정하세요.",
+      "method": "POST",
+      "url": "{{ _.base_url }}/auth/worldid",
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"proof\": {\n    \"merkle_root\": \"0x1234...\",\n    \"nullifier_hash\": \"0x5678...\",\n    \"proof\": \"0xabcd...\",\n    \"verification_level\": \"orb\"\n  },\n  \"walletAddress\": \"0x0000000000000000000000000000000000000000\"\n}"
+      },
+      "parameters": []
+    },
+
+    {
+      "_id": "fld_user",
+      "_type": "request_group",
+      "parentId": "wrk_codexoftouch",
+      "name": "User",
+      "description": "사용자 정보 (인증 필요)"
+    },
+    {
+      "_id": "req_user_me",
+      "_type": "request",
+      "parentId": "fld_user",
+      "name": "내 정보 조회",
+      "method": "GET",
+      "url": "{{ _.base_url }}/user/me",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ _.token }}"
+        }
+      ],
+      "body": {},
+      "parameters": []
+    },
+    {
+      "_id": "req_user_checkin",
+      "_type": "request",
+      "parentId": "fld_user",
+      "name": "일일 체크인",
+      "description": "매일 체크인하여 보상 획득",
+      "method": "POST",
+      "url": "{{ _.base_url }}/user/checkin",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ _.token }}"
+        }
+      ],
+      "body": {},
+      "parameters": []
+    },
+
+    {
+      "_id": "fld_characters",
+      "_type": "request_group",
+      "parentId": "wrk_codexoftouch",
+      "name": "Characters",
+      "description": "캐릭터 목록"
+    },
+    {
+      "_id": "req_characters_active",
+      "_type": "request",
+      "parentId": "fld_characters",
+      "name": "활성 캐릭터 조회",
+      "description": "현재 활성화된 캐릭터와 통계 조회 (인증 시 추가 정보)",
+      "method": "GET",
+      "url": "{{ _.base_url }}/characters/active",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ _.token }}",
+          "disabled": true
+        }
+      ],
+      "body": {},
+      "parameters": []
+    },
+    {
+      "_id": "req_characters_list",
+      "_type": "request",
+      "parentId": "fld_characters",
+      "name": "전체 캐릭터 목록",
+      "description": "모든 캐릭터 목록 조회",
+      "method": "GET",
+      "url": "{{ _.base_url }}/characters",
+      "headers": [],
+      "body": {},
+      "parameters": [
+        {
+          "name": "includeInactive",
+          "value": "false",
+          "disabled": true
+        }
+      ]
+    },
+
+    {
+      "_id": "fld_pet",
+      "_type": "request_group",
+      "parentId": "wrk_codexoftouch",
+      "name": "Pet",
+      "description": "쓰다듬기 액션 (인증 필요, Rate Limit: 10/min)"
+    },
+    {
+      "_id": "req_pet_action",
+      "_type": "request",
+      "parentId": "fld_pet",
+      "name": "쓰다듬기",
+      "description": "캐릭터 쓰다듬기 수행. Rate Limit: 분당 10회",
+      "method": "POST",
+      "url": "{{ _.base_url }}/pet",
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        },
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ _.token }}"
+        }
+      ],
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"characterId\": 1,\n  \"skillId\": null\n}"
+      },
+      "parameters": []
+    },
+    {
+      "_id": "req_pet_history",
+      "_type": "request",
+      "parentId": "fld_pet",
+      "name": "쓰다듬기 기록 조회",
+      "description": "내 쓰다듬기 인터랙션 기록",
+      "method": "GET",
+      "url": "{{ _.base_url }}/pet/history",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ _.token }}"
+        }
+      ],
+      "body": {},
+      "parameters": [
+        {
+          "name": "limit",
+          "value": "20",
+          "disabled": true
+        },
+        {
+          "name": "offset",
+          "value": "0",
+          "disabled": true
+        },
+        {
+          "name": "characterId",
+          "value": "1",
+          "disabled": true
+        }
+      ]
+    },
+
+    {
+      "_id": "fld_codex",
+      "_type": "request_group",
+      "parentId": "wrk_codexoftouch",
+      "name": "Codex",
+      "description": "도감"
+    },
+    {
+      "_id": "req_codex_me",
+      "_type": "request",
+      "parentId": "fld_codex",
+      "name": "내 도감 조회",
+      "description": "수집한 캐릭터 도감 (인증 필요)",
+      "method": "GET",
+      "url": "{{ _.base_url }}/codex/me",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ _.token }}"
+        }
+      ],
+      "body": {},
+      "parameters": []
+    },
+    {
+      "_id": "req_codex_character",
+      "_type": "request",
+      "parentId": "fld_codex",
+      "name": "캐릭터 도감 통계",
+      "description": "특정 캐릭터의 도감 통계 (Public)",
+      "method": "GET",
+      "url": "{{ _.base_url }}/codex/character/1",
+      "headers": [],
+      "body": {},
+      "parameters": []
+    },
+
+    {
+      "_id": "fld_jackpot",
+      "_type": "request_group",
+      "parentId": "wrk_codexoftouch",
+      "name": "Jackpot",
+      "description": "잭팟"
+    },
+    {
+      "_id": "req_jackpot_current",
+      "_type": "request",
+      "parentId": "fld_jackpot",
+      "name": "현재 잭팟 상태",
+      "method": "GET",
+      "url": "{{ _.base_url }}/jackpot/current",
+      "headers": [],
+      "body": {},
+      "parameters": []
+    },
+    {
+      "_id": "req_jackpot_history",
+      "_type": "request",
+      "parentId": "fld_jackpot",
+      "name": "잭팟 기록",
+      "method": "GET",
+      "url": "{{ _.base_url }}/jackpot/history",
+      "headers": [],
+      "body": {},
+      "parameters": [
+        {
+          "name": "limit",
+          "value": "20",
+          "disabled": true
+        },
+        {
+          "name": "offset",
+          "value": "0",
+          "disabled": true
+        },
+        {
+          "name": "characterId",
+          "value": "1",
+          "disabled": true
+        }
+      ]
+    },
+
+    {
+      "_id": "fld_skills",
+      "_type": "request_group",
+      "parentId": "wrk_codexoftouch",
+      "name": "Skills",
+      "description": "스킬"
+    },
+    {
+      "_id": "req_skills_list",
+      "_type": "request",
+      "parentId": "fld_skills",
+      "name": "전체 스킬 목록",
+      "description": "사용 가능한 모든 스킬 조회 (Public)",
+      "method": "GET",
+      "url": "{{ _.base_url }}/skills",
+      "headers": [],
+      "body": {},
+      "parameters": []
+    },
+    {
+      "_id": "req_skills_my",
+      "_type": "request",
+      "parentId": "fld_skills",
+      "name": "내 스킬 목록",
+      "description": "보유한 스킬 조회 (인증 필요)",
+      "method": "GET",
+      "url": "{{ _.base_url }}/skills/my",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ _.token }}"
+        }
+      ],
+      "body": {},
+      "parameters": []
+    },
+    {
+      "_id": "req_skills_purchase",
+      "_type": "request",
+      "parentId": "fld_skills",
+      "name": "스킬 구매",
+      "description": "WLD 토큰으로 스킬 구매. Rate Limit: 분당 5회",
+      "method": "POST",
+      "url": "{{ _.base_url }}/skills/1/purchase",
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        },
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ _.token }}"
+        }
+      ],
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"transactionId\": \"tx_abc123\",\n  \"paymentReference\": \"ref_xyz789\"\n}"
+      },
+      "parameters": []
+    },
+    {
+      "_id": "req_skills_use",
+      "_type": "request",
+      "parentId": "fld_skills",
+      "name": "스킬 사용",
+      "description": "스킬 활성화/사용 (인증 필요)",
+      "method": "POST",
+      "url": "{{ _.base_url }}/skills/1/use",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ _.token }}"
+        }
+      ],
+      "body": {},
+      "parameters": []
+    }
+  ]
+}

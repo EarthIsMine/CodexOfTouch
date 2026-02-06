@@ -36,17 +36,22 @@ contract CodexNFT is ERC721, ERC721URIStorage, Ownable {
         uint256 characterId,
         string memory tokenURI
     ) public onlyOwner returns (uint256) {
+        // 1) 동일 유저-캐릭터 조합은 중복 민팅 불가
         require(!hasMinted[to][characterId], "Already minted this character");
 
+        // 2) 토큰 ID를 발급하고 카운터 증가
         uint256 tokenId = _tokenIdCounter;
         _tokenIdCounter++;
 
+        // 3) NFT 민팅 + 메타데이터 URI 저장
         _safeMint(to, tokenId);
         _setTokenURI(tokenId, tokenURI);
 
+        // 4) 인덱싱용 상태 업데이트
         characterToTokenId[characterId] = tokenId;
         hasMinted[to][characterId] = true;
 
+        // 5) 오프체인 인덱싱을 위한 이벤트 발행
         emit CodexMinted(to, tokenId, characterId, tokenURI);
 
         return tokenId;
@@ -60,10 +65,12 @@ contract CodexNFT is ERC721, ERC721URIStorage, Ownable {
         uint256[] memory characterIds,
         string[] memory tokenURIs
     ) public onlyOwner returns (uint256[] memory) {
+        // 1) 입력 배열 길이 일치 필요
         require(characterIds.length == tokenURIs.length, "Length mismatch");
 
         uint256[] memory tokenIds = new uint256[](characterIds.length);
 
+        // 2) 각 캐릭터별로 단건 민팅 로직 재사용
         for (uint256 i = 0; i < characterIds.length; i++) {
             tokenIds[i] = mintCodex(to, characterIds[i], tokenURIs[i]);
         }

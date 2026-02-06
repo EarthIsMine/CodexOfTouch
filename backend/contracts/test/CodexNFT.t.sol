@@ -11,10 +11,12 @@ contract CodexNFTTest is Test {
     address public user2;
 
     function setUp() public {
+        // 테스트 계정 구성
         owner = address(this);
         user1 = address(0x1);
         user2 = address(0x2);
 
+        // 컨트랙트 배포 (owner = address(this))
         codexNFT = new CodexNFT();
     }
 
@@ -22,6 +24,7 @@ contract CodexNFTTest is Test {
         uint256 characterId = 1;
         string memory tokenURI = "ipfs://QmTest123";
 
+        // 민팅 플로우: mint -> owner/URI/보유여부 검증
         uint256 tokenId = codexNFT.mintCodex(user1, characterId, tokenURI);
 
         assertEq(tokenId, 1);
@@ -34,8 +37,10 @@ contract CodexNFTTest is Test {
         uint256 characterId = 1;
         string memory tokenURI = "ipfs://QmTest123";
 
+        // 첫 민팅 성공
         codexNFT.mintCodex(user1, characterId, tokenURI);
 
+        // 같은 유저-캐릭터 조합은 재민팅 불가
         vm.expectRevert("Already minted this character");
         codexNFT.mintCodex(user1, characterId, tokenURI);
     }
@@ -51,6 +56,7 @@ contract CodexNFTTest is Test {
         tokenURIs[1] = "ipfs://QmTest2";
         tokenURIs[2] = "ipfs://QmTest3";
 
+        // 배치 민팅: 각 항목이 단건 민팅 로직을 재사용
         uint256[] memory tokenIds = codexNFT.batchMintCodex(user1, characterIds, tokenURIs);
 
         assertEq(tokenIds.length, 3);
@@ -60,14 +66,17 @@ contract CodexNFTTest is Test {
     }
 
     function testOnlyOwnerCanMint() public {
+        // owner가 아닌 계정으로 호출하면 revert
         vm.prank(user1);
         vm.expectRevert();
         codexNFT.mintCodex(user2, 1, "ipfs://test");
     }
 
     function testGetCurrentTokenId() public {
+        // 초기 카운터는 1
         assertEq(codexNFT.getCurrentTokenId(), 1);
 
+        // 민팅마다 카운터 증가
         codexNFT.mintCodex(user1, 1, "ipfs://test1");
         assertEq(codexNFT.getCurrentTokenId(), 2);
 
@@ -76,8 +85,10 @@ contract CodexNFTTest is Test {
     }
 
     function testHasCharacter() public {
+        // 민팅 전에는 보유하지 않음
         assertFalse(codexNFT.hasCharacter(user1, 1));
 
+        // 민팅 후에는 보유, 다른 캐릭터/유저는 false
         codexNFT.mintCodex(user1, 1, "ipfs://test");
 
         assertTrue(codexNFT.hasCharacter(user1, 1));
