@@ -62,13 +62,26 @@ export async function GET() {
     const currentPool = Number(payload.data.jackpot.currentPool ?? 0);
     const timeRemaining = Number(payload.data.jackpot.timeRemaining ?? 0);
     const assetFolder = payload.data.character?.assetFolder ?? "";
-    const fileNames = (payload.data.character?.files ?? [])
-      .map((file) => file.name ?? "")
-      .filter(Boolean);
-    const htmlName = fileNames.find((name) => name.endsWith(".html")) || "index.html";
-    const jsName = fileNames.find((name) => name.endsWith(".js")) || "main.js";
-    const glbName =
-      fileNames.find((name) => name.endsWith(".glb")) || `${assetFolder}.glb`;
+    const files = payload.data.character?.files ?? [];
+    const htmlFile =
+      files.find((file) => (file.name ?? "").endsWith(".html")) ??
+      files.find((file) => (file.url ?? "").endsWith(".html"));
+    const jsFile =
+      files.find((file) => (file.name ?? "").endsWith(".js")) ??
+      files.find((file) => (file.url ?? "").endsWith(".js"));
+    const glbFile =
+      files.find((file) => (file.name ?? "").endsWith(".glb")) ??
+      files.find((file) => (file.url ?? "").endsWith(".glb"));
+
+    const toAbsoluteUrl = (rawUrl: string | undefined, fallbackPath: string) => {
+      if (!rawUrl) {
+        return `${backendOrigin}${fallbackPath}`;
+      }
+      if (rawUrl.startsWith("http://") || rawUrl.startsWith("https://")) {
+        return rawUrl;
+      }
+      return `${backendOrigin}${rawUrl.startsWith("/") ? rawUrl : `/${rawUrl}`}`;
+    };
 
     return NextResponse.json({
       ok: true,
@@ -77,9 +90,18 @@ export async function GET() {
         characterId: Number(payload.data.character?.id ?? 0),
         characterName: payload.data.character?.name ?? "",
         characterAssetFolder: assetFolder,
-        characterHtmlUrl: `${backendOrigin}/public/${assetFolder}/${htmlName}`,
-        characterJsUrl: `${backendOrigin}/public/${assetFolder}/${jsName}`,
-        characterGlbUrl: `${backendOrigin}/public/${assetFolder}/${glbName}`,
+        characterHtmlUrl: toAbsoluteUrl(
+          htmlFile?.url,
+          `/public/${assetFolder}/index.html`,
+        ),
+        characterJsUrl: toAbsoluteUrl(
+          jsFile?.url,
+          `/public/${assetFolder}/main.js`,
+        ),
+        characterGlbUrl: toAbsoluteUrl(
+          glbFile?.url,
+          `/public/${assetFolder}/${assetFolder}.glb`,
+        ),
         jackpotPool: currentPool,
         jackpot: timeRemaining,
         poolAmount: currentPool,

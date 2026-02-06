@@ -10,6 +10,17 @@ import logger from './config/logger';
 
 const app: Application = express();
 
+// Serve static files from public directory first.
+// This avoids Helmet frame/csp headers from blocking iframe-based character viewers.
+app.use(
+  '/public',
+  express.static(path.join(__dirname, '../public'), {
+    setHeaders: (res) => {
+      res.setHeader('Cross-Origin-Resource-Policy', 'cross-origin');
+    },
+  })
+);
+
 // Security middleware
 app.use(helmet());
 
@@ -36,9 +47,6 @@ app.use(
 
 // Rate limiting
 app.use('/api', generalRateLimit);
-
-// Serve static files from public directory
-app.use('/public', express.static(path.join(__dirname, '../public')));
 
 // Health check (outside /api)
 app.get('/health', routes);

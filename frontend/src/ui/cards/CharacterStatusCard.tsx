@@ -6,10 +6,7 @@ import { useMemo } from "react";
 export type CharacterStatusCardProps = {
   title: string;
   characterName: string;
-  characterAssetFolder?: string;
   characterHtmlUrl?: string;
-  characterJsUrl?: string;
-  characterGlbUrl?: string;
   topActionLabel: string;
   topActionDisabled?: boolean;
   onTopActionClick?: () => void;
@@ -25,10 +22,7 @@ export type CharacterStatusCardProps = {
 export default function CharacterStatusCard({
   title,
   characterName,
-  characterAssetFolder,
   characterHtmlUrl,
-  characterJsUrl,
-  characterGlbUrl,
   topActionLabel,
   topActionDisabled = false,
   onTopActionClick,
@@ -41,22 +35,8 @@ export default function CharacterStatusCard({
   hint,
 }: CharacterStatusCardProps) {
   const viewerUrl = useMemo(() => {
-    if (!characterHtmlUrl) {
-      return "";
-    }
-    const params = new URLSearchParams();
-    if (characterJsUrl) {
-      params.set("main", characterJsUrl);
-    }
-    if (characterGlbUrl) {
-      params.set("model", characterGlbUrl);
-    }
-    if (characterAssetFolder) {
-      params.set("assetFolder", characterAssetFolder);
-    }
-    const query = params.toString();
-    return query ? `${characterHtmlUrl}?${query}` : characterHtmlUrl;
-  }, [characterAssetFolder, characterGlbUrl, characterHtmlUrl, characterJsUrl]);
+    return characterHtmlUrl || "";
+  }, [characterHtmlUrl]);
 
   return (
     <HeroCard>
@@ -76,17 +56,16 @@ export default function CharacterStatusCard({
 
       <StageArea>
         <Cylinder aria-hidden>
-          <CharacterCore>
-            {viewerUrl ? (
-              <CharacterFrame
-                src={viewerUrl}
-                title={`${characterName} 3D Viewer`}
-                loading="lazy"
-              />
-            ) : (
+          {viewerUrl ? (
+            <CharacterFrame
+              src={viewerUrl}
+              title={`${characterName} 3D Viewer`}
+            />
+          ) : (
+            <CharacterCore>
               <GlowBlob />
-            )}
-          </CharacterCore>
+            </CharacterCore>
+          )}
         </Cylinder>
       </StageArea>
 
@@ -198,6 +177,7 @@ const Cylinder = styled.div`
   inset: 8px 20px 22px;
   border-radius: 24px 24px 32px 32px / 20px 20px 28px 28px;
   border: 1px solid rgba(133, 223, 255, 0.4);
+  overflow: hidden;
   background:
     linear-gradient(
       90deg,
@@ -253,9 +233,11 @@ const GlowBlob = styled.div`
 `;
 
 const CharacterFrame = styled.iframe`
-  width: clamp(68px, 10.5vh, 104px);
-  height: clamp(68px, 10.5vh, 104px);
-  border-radius: 999px;
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: inherit;
   border: 0;
   overflow: hidden;
   pointer-events: none;

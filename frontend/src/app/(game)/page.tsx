@@ -25,10 +25,7 @@ export default function HomePage() {
   const [isJackpotLive, setIsJackpotLive] = useState(false);
   const [poolAmount, setPoolAmount] = useState(FALLBACK_JACKPOT_POOL);
   const [characterName, setCharacterName] = useState("");
-  const [characterAssetFolder, setCharacterAssetFolder] = useState("");
   const [characterHtmlUrl, setCharacterHtmlUrl] = useState("");
-  const [characterJsUrl, setCharacterJsUrl] = useState("");
-  const [characterGlbUrl, setCharacterGlbUrl] = useState("");
   const [isCheckingIn, setIsCheckingIn] = useState(false);
   const [checkInNotice, setCheckInNotice] = useState("");
   const [toastMessage, setToastMessage] = useState("");
@@ -48,10 +45,7 @@ export default function HomePage() {
         data?: {
           characterId: number;
           characterName: string;
-          characterAssetFolder: string;
           characterHtmlUrl: string;
-          characterJsUrl: string;
-          characterGlbUrl: string;
           jackpotPool: number;
           jackpot: number;
           poolAmount: number;
@@ -67,10 +61,7 @@ export default function HomePage() {
       setJackpotRemainingSec(payload.data.jackpot);
       setPoolAmount(payload.data.poolAmount);
       setCharacterName(payload.data.characterName);
-      setCharacterAssetFolder(payload.data.characterAssetFolder);
       setCharacterHtmlUrl(payload.data.characterHtmlUrl);
-      setCharacterJsUrl(payload.data.characterJsUrl);
-      setCharacterGlbUrl(payload.data.characterGlbUrl);
       setIsJackpotLive(true);
     } catch {
       // Keep current values when backend route is unavailable.
@@ -295,10 +286,7 @@ export default function HomePage() {
   const heroCardText = {
     title: t("card.activeTitle"),
     characterName: characterName || t("card.characterName"),
-    characterAssetFolder,
     characterHtmlUrl,
-    characterJsUrl,
-    characterGlbUrl,
     topActionLabel: isCheckingIn
       ? t("cta.checkingIn")
       : canDailyCheckIn
