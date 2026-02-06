@@ -2,6 +2,65 @@
   "common": {
     "i18nTest": "i18n & Color Test Page",
     "confirm": "Confirm",
-    "cancel": "Cancel"
+    "cancel": "Cancel",
+    "changeLanguageAria": "Change language (current: {locale})",
+    "changeLanguageTitle": "Language: {locale}"
+  },
+  "home": {
+    "header": {
+      "appName": "CodexOfTouch",
+      "verified": "World ID Verified",
+      "verifyRequired": "Verify Required"
+    },
+    "cta": {
+      "cooldown": "Cooldown ({seconds}s)",
+      "pet": "Pet",
+      "petCost": "({amount} Stardust per touch)",
+      "verify": "Verify with World ID",
+      "dailyCheckIn": "Check-in",
+      "note": "No pay-to-win.",
+      "exploreCodex": "Open Codex"
+    },
+    "card": {
+      "activeTitle": "Active Character",
+      "characterName": "Nyx, the Stardust",
+      "stage": "Stage 1",
+      "jackpotPool": "Jackpot Pool",
+      "pool": "Pool",
+      "jackpot": "Jackpot",
+      "hint": "Last toucher wins the pool if no interaction occurs for 5 minutes.",
+      "softCurrency": "Stardust",
+      "cooldown": "Cooldown",
+      "cooldownValue": "{seconds}s",
+      "ready": "Ready",
+      "checkinSub": "Daily check-in to earn more",
+      "cooldownSub": "30s after fail"
+    },
+    "feed": {
+      "success": "Success! {name} secured by {user}. {action} in progress.",
+      "fail": "Petting failed. Your next spin starts in {seconds}s."
+    },
+    "collection": {
+      "title": "Collection",
+      "level": "Lv.{level}",
+      "owned": "Owned",
+      "locked": "Locked"
+    },
+    "dock": {
+      "home": "Home",
+      "market": "Market"
+    },
+    "market": {
+      "comingSoon": "Coming Soon"
+    },
+    "nav": {
+      "codex": "📖 Codex",
+      "rules": "❓ Rules"
+    },
+    "flow": {
+      "toRules": "Go to Rules",
+      "toMarket": "Go to Market",
+      "toHome": "Back to Home"
+    }
   }
 }
