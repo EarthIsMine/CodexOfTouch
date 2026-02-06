@@ -4,7 +4,7 @@ import { WorldIDProof, WorldIDVerifyResponse } from '@/types';
 import logger from '@/config/logger';
 
 export class WorldIDService {
-  private readonly verifyUrl = 'https://developer.worldcoin.org/api/v1/verify';
+  private readonly verifyUrl = 'https://developer.worldcoin.org/api/v2/verify';
 
   async verifyProof(proof: WorldIDProof): Promise<boolean> {
     // 개발 환경: 테스트용 nullifier_hash 허용
@@ -35,6 +35,7 @@ export class WorldIDService {
         {
           headers: {
             'Content-Type': 'application/json',
+            'User-Agent': 'CodexOfTouch-Backend/1.0',
           },
         }
       );
