@@ -130,7 +130,7 @@ export class CodexService {
     const metadata = {
       name: `${character.name} Codex`,
       description: `Petting Roulette Game - ${character.name} Character Codex NFT. This NFT represents your achievement in successfully petting this character.`,
-      image: character.imageUrl,
+      image: `/public/${character.assetFolder}`,
       external_url: `https://petting-roulette.com/character/${characterId}`,
       attributes: [
         {
@@ -176,7 +176,7 @@ export class CodexService {
           select: {
             id: true,
             name: true,
-            imageUrl: true,
+            assetFolder: true,
           },
         },
       },
@@ -189,7 +189,7 @@ export class CodexService {
       codex: codex.map((c) => ({
         characterId: c.characterId,
         characterName: c.character.name,
-        characterImage: c.character.imageUrl,
+        characterImage: c.character.assetFolder,
         contractAddress: c.contractAddress,
         tokenId: c.tokenId,
         chainId: c.chainId,
