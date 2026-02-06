@@ -4,16 +4,19 @@ import styled from "@emotion/styled";
 import { useState } from "react";
 import type { ButtonHTMLAttributes, MouseEvent } from "react";
 import { useRouter } from "next/navigation";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { defaultLocale, locales, type Locale } from "@/i18n/config";
 
 type LanguageButtonProps = ButtonHTMLAttributes<HTMLButtonElement>;
 
 export default function LanguageButton(props: LanguageButtonProps) {
   const router = useRouter();
-  const [locale, setLocale] = useState<Locale>(() => readLocaleFromCookie());
+  const localeFromIntl = useLocale();
+  const locale = normalizeLocale(localeFromIntl);
+  const [pendingLocale, setPendingLocale] = useState<Locale | null>(null);
   const [isOpen, setIsOpen] = useState(false);
   const t = useTranslations("common");
+  const selectedLocale = pendingLocale ?? locale;
 
   const handleClick = (event: MouseEvent<HTMLButtonElement>) => {
     setIsOpen((prev) => !prev);
@@ -21,13 +24,13 @@ export default function LanguageButton(props: LanguageButtonProps) {
   };
 
   const handleSelect = (nextLocale: Locale) => {
-    if (nextLocale === locale) {
+    if (nextLocale === selectedLocale) {
       setIsOpen(false);
       return;
     }
 
     setLocaleCookie(nextLocale);
-    setLocale(nextLocale);
+    setPendingLocale(nextLocale);
     setIsOpen(false);
     router.refresh();
   };
@@ -36,10 +39,10 @@ export default function LanguageButton(props: LanguageButtonProps) {
     <Wrapper>
       <Button
         type="button"
-        aria-label={t("changeLanguageAria", { locale })}
+        aria-label={t("changeLanguageAria", { locale: selectedLocale })}
         aria-haspopup="listbox"
         aria-expanded={isOpen}
-        title={t("changeLanguageTitle", { locale })}
+        title={t("changeLanguageTitle", { locale: selectedLocale })}
         {...props}
         onClick={handleClick}
       >
@@ -53,7 +56,7 @@ export default function LanguageButton(props: LanguageButtonProps) {
               key={option}
               type="button"
               onClick={() => handleSelect(option)}
-              data-active={option === locale}
+              data-active={option === selectedLocale}
             >
               {option}
             </OptionButton>
@@ -115,21 +118,7 @@ const OptionButton = styled.button`
 `;
 
 const LOCALE_COOKIE = "NEXT_LOCALE";
-
-function readLocaleFromCookie(): Locale {
-  if (typeof document === "undefined") {
-    return defaultLocale;
-  }
-
-  const match = document.cookie
-    .split("; ")
-    .find((cookie) => cookie.startsWith(`${LOCALE_COOKIE}=`));
-
-  if (!match) {
-    return defaultLocale;
-  }
-
-  const value = match.split("=")[1];
+function normalizeLocale(value: string): Locale {
   return locales.includes(value as Locale) ? (value as Locale) : defaultLocale;
 }
 

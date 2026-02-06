@@ -63,6 +63,29 @@
       "toRules": "Go to Rules",
       "toMarket": "Go to Market",
       "toHome": "Back to Home"
+    },
+    "rulesPage": {
+      "title": "How The Game Works",
+      "subtitle": "Core rules you need before touching the active character.",
+      "recentTitle": "Recent Activity",
+      "items": {
+        "jackpot": {
+          "title": "Jackpot Pool",
+          "body": "Each successful touch contributes to the shared jackpot pool."
+        },
+        "lastTouch": {
+          "title": "Last Touch Wins",
+          "body": "If no one touches for 5 minutes, the last successful toucher takes the pool."
+        },
+        "cooldown": {
+          "title": "Failure Cooldown",
+          "body": "Failed attempts apply a 30-second cooldown before your next try."
+        },
+        "checkin": {
+          "title": "Daily Check-in",
+          "body": "Claim your check-in reward daily to secure extra Stardust."
+        }
+      }
     }
   }
 }
