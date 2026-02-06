@@ -5,6 +5,8 @@ type ActiveCharacterApiResponse = {
   data?: {
     character?: {
       id?: number;
+      name?: string;
+      imageUrl?: string;
     };
     jackpot?: {
       currentPool?: number;
@@ -59,6 +61,8 @@ export async function GET() {
       status: response.status,
       data: {
         characterId: Number(payload.data.character?.id ?? 0),
+        characterName: payload.data.character?.name ?? "",
+        characterImageUrl: payload.data.character?.imageUrl ?? "",
         jackpotPool: currentPool,
         jackpot: timeRemaining,
         poolAmount: currentPool,

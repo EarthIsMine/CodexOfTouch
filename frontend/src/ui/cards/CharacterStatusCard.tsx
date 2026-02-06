@@ -5,6 +5,7 @@ import styled from "@emotion/styled";
 export type CharacterStatusCardProps = {
   title: string;
   characterName: string;
+  characterImageUrl?: string;
   topActionLabel: string;
   topActionDisabled?: boolean;
   onTopActionClick?: () => void;
@@ -20,6 +21,7 @@ export type CharacterStatusCardProps = {
 export default function CharacterStatusCard({
   title,
   characterName,
+  characterImageUrl,
   topActionLabel,
   topActionDisabled = false,
   onTopActionClick,
@@ -50,7 +52,13 @@ export default function CharacterStatusCard({
       <StageArea>
         <Cylinder aria-hidden>
           <CharacterCore>
-            <GlowBlob />
+            {characterImageUrl ? (
+              <CharacterAvatar
+                style={{ backgroundImage: `url(${characterImageUrl})` }}
+              />
+            ) : (
+              <GlowBlob />
+            )}
           </CharacterCore>
         </Cylinder>
       </StageArea>
@@ -215,6 +223,15 @@ const GlowBlob = styled.div`
   box-shadow:
     0 0 36px rgba(63, 193, 255, 0.46),
     inset 0 -20px 30px rgba(232, 133, 72, 0.42);
+`;
+
+const CharacterAvatar = styled.div`
+  width: clamp(68px, 10.5vh, 104px);
+  height: clamp(68px, 10.5vh, 104px);
+  border-radius: 999px;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
 `;
 
 const BottomStats = styled.div`

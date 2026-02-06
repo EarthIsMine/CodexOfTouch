@@ -22,6 +22,8 @@ export default function HomePage() {
     FALLBACK_JACKPOT_SECONDS,
   );
   const [poolAmount, setPoolAmount] = useState(FALLBACK_JACKPOT_POOL);
+  const [characterName, setCharacterName] = useState("");
+  const [characterImageUrl, setCharacterImageUrl] = useState("");
   const [isCheckingIn, setIsCheckingIn] = useState(false);
   const [checkInNotice, setCheckInNotice] = useState("");
   const [toastMessage, setToastMessage] = useState("");
@@ -39,6 +41,8 @@ export default function HomePage() {
       const payload = (await response.json()) as {
         ok: boolean;
         data?: {
+          characterName: string;
+          characterImageUrl: string;
           jackpotPool: number;
           jackpot: number;
           poolAmount: number;
@@ -52,6 +56,8 @@ export default function HomePage() {
       setJackpotPool(payload.data.jackpotPool);
       setJackpotRemainingSec(payload.data.jackpot);
       setPoolAmount(payload.data.poolAmount);
+      setCharacterName(payload.data.characterName);
+      setCharacterImageUrl(payload.data.characterImageUrl);
     } catch {
       // Keep current values when backend route is unavailable.
     }
@@ -180,7 +186,8 @@ export default function HomePage() {
 
   const heroCardText = {
     title: t("card.activeTitle"),
-    characterName: t("card.characterName"),
+    characterName: characterName || t("card.characterName"),
+    characterImageUrl,
     topActionLabel: isCheckingIn
       ? t("cta.checkingIn")
       : canDailyCheckIn
