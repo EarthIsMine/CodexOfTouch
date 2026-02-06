@@ -62,7 +62,7 @@ const FlowLink = styled(Link)`
   border: 1px solid rgba(113, 221, 255, 0.34);
   color: rgba(205, 241, 255, 0.92);
   background: rgba(9, 40, 70, 0.62);
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 700;
   letter-spacing: 0.03em;
   display: inline-flex;
@@ -71,22 +71,22 @@ const FlowLink = styled(Link)`
 `;
 
 const CollectionPanel = styled.section`
-  border-radius: 16px;
+  border-radius: 18px;
   border: 1px solid rgba(104, 212, 255, 0.24);
   background: rgba(6, 22, 46, 0.72);
-  padding: 10px;
+  padding: 12px;
 `;
 
 const CollectionHeader = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 8px;
+  margin-bottom: 10px;
 `;
 
 const CollectionTitle = styled.h2`
   margin: 0;
-  font-size: 14px;
+  font-size: 17px;
   letter-spacing: 0.04em;
   text-transform: uppercase;
   color: rgba(178, 230, 255, 0.9);
@@ -94,15 +94,15 @@ const CollectionTitle = styled.h2`
 
 const CollectionGrid = styled.div`
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 8px;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
 `;
 
 const PetCard = styled.div`
-  border-radius: 10px;
+  border-radius: 12px;
   border: 1px solid rgba(122, 214, 255, 0.2);
   background: rgba(8, 29, 61, 0.78);
-  padding: 4px;
+  padding: 6px;
 
   &[data-owned="false"] {
     opacity: 0.6;
@@ -110,7 +110,8 @@ const PetCard = styled.div`
 `;
 
 const PetThumb = styled.div`
-  height: 56px;
+  width: 100%;
+  aspect-ratio: 1 / 1;
   border-radius: 8px;
   background:
     radial-gradient(
@@ -143,7 +144,7 @@ const PetThumb = styled.div`
 `;
 
 const PetMeta = styled.div`
-  margin-top: 4px;
+  margin-top: 6px;
   padding: 0 2px;
   display: flex;
   align-items: center;
@@ -152,12 +153,12 @@ const PetMeta = styled.div`
 `;
 
 const PetLevel = styled.span`
-  font-size: 10px;
+  font-size: 13px;
   color: rgba(164, 218, 244, 0.84);
 `;
 
 const PetState = styled.span`
-  font-size: 9px;
+  font-size: 12px;
   color: rgba(213, 243, 255, 0.88);
   text-transform: uppercase;
 `;
