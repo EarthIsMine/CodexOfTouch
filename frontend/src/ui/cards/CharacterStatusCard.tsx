@@ -6,6 +6,8 @@ export type CharacterStatusCardProps = {
   title: string;
   characterName: string;
   topActionLabel: string;
+  topActionDisabled?: boolean;
+  onTopActionClick?: () => void;
   jackpotPoolLabel: string;
   jackpotPoolValue: string;
   primaryStatLabel: string;
@@ -19,6 +21,8 @@ export default function CharacterStatusCard({
   title,
   characterName,
   topActionLabel,
+  topActionDisabled = false,
+  onTopActionClick,
   jackpotPoolLabel,
   jackpotPoolValue,
   primaryStatLabel,
@@ -34,7 +38,13 @@ export default function CharacterStatusCard({
           <CardTitle>{title}</CardTitle>
           <CharacterName>{characterName}</CharacterName>
         </HeroMeta>
-        <TopActionButton type="button">{topActionLabel}</TopActionButton>
+        <TopActionButton
+          type="button"
+          onClick={onTopActionClick}
+          disabled={topActionDisabled}
+        >
+          {topActionLabel}
+        </TopActionButton>
       </HeroTop>
 
       <StageArea>
@@ -132,6 +142,11 @@ const TopActionButton = styled.button`
   border: 1px solid rgba(122, 225, 255, 0.52);
   background: rgba(37, 124, 187, 0.42);
   color: rgba(234, 249, 255, 1);
+
+  &:disabled {
+    opacity: 0.62;
+    cursor: not-allowed;
+  }
 `;
 
 const StageArea = styled.div`

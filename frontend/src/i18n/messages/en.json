@@ -19,7 +19,8 @@
       "verify": "Verify with World ID",
       "dailyCheckIn": "Check-in",
       "note": "No pay-to-win.",
-      "exploreCodex": "Open Codex"
+      "exploreCodex": "Open Codex",
+      "dailyCheckInDone": "Check-in Complete"
     },
     "card": {
       "activeTitle": "Active Character",
@@ -36,7 +37,10 @@
       "checkinSub": "Daily check-in to earn more",
       "cooldownSub": "30s after fail",
       "expandInfo": "Show details",
-      "collapseInfo": "Hide details"
+      "collapseInfo": "Hide details",
+      "checkinSubWithReward": "Daily check-in available (+{amount} Stardust)",
+      "checkinAlreadyDone": "Daily check-in already completed for today.",
+      "checkinSuccess": "Daily check-in complete: +{amount} Stardust"
     },
     "feed": {
       "success": "Success! {name} secured by {user}. {action} in progress.",

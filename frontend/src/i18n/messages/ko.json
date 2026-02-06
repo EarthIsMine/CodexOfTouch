@@ -19,7 +19,8 @@
       "verify": "World ID로 인증하기",
       "dailyCheckIn": "출석 체크",
       "note": "과금으로 승부가 갈리지 않습니다.",
-      "exploreCodex": "도감 보기"
+      "exploreCodex": "도감 보기",
+      "dailyCheckInDone": "출석 완료"
     },
     "card": {
       "activeTitle": "현재 활성 캐릭터",
@@ -36,7 +37,10 @@
       "checkinSub": "출석 체크로 더 모으세요",
       "cooldownSub": "실패 후 30초 대기",
       "expandInfo": "정보 펼치기",
-      "collapseInfo": "정보 접기"
+      "collapseInfo": "정보 접기",
+      "checkinSubWithReward": "출석 체크 가능 (+{amount} 스타더스트)",
+      "checkinAlreadyDone": "오늘 출석 체크를 이미 완료했습니다.",
+      "checkinSuccess": "출석 체크 완료: +{amount} 스타더스트"
     },
     "feed": {
       "success": "성공! {name} 캐릭터를 {user} 님이 확보했습니다. {action} 진행 중입니다.",
