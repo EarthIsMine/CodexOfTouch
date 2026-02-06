@@ -62,8 +62,8 @@ const PrimaryAction = styled.div`
 `;
 
 const ActionCaption = styled.div`
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 700;
-  color: rgba(196, 235, 255, 0.9);
+  color: rgba(219, 244, 255, 0.96);
   text-align: center;
 `;

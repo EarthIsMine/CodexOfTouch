@@ -92,9 +92,9 @@ const BackgroundStars = styled.div`
       transparent 36%
     );
 
-  opacity: 0.75;
+  opacity: 0.5;
   filter: blur(0.2px);
-  animation: twinkle 6.5s ease-in-out infinite;
+  animation: twinkle 8s ease-in-out infinite;
 
   &::before {
     content: "";
@@ -131,17 +131,17 @@ const BackgroundStars = styled.div`
         rgba(255, 255, 255, 0.8) 45%,
         rgba(255, 255, 255, 0) 70%
       );
-    opacity: 0.85;
+    opacity: 0.55;
     filter: blur(0.4px);
   }
 
   @keyframes twinkle {
     0%,
     100% {
-      opacity: 0.65;
+      opacity: 0.48;
     }
     50% {
-      opacity: 0.9;
+      opacity: 0.62;
     }
   }
 `;

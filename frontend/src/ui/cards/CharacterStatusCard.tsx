@@ -104,7 +104,7 @@ const HeroMeta = styled.div`
 
 const CardTitle = styled.div`
   font-size: clamp(12px, 1.4vh, 14px);
-  color: rgba(173, 221, 255, 0.8);
+  color: rgba(205, 236, 255, 0.92);
   letter-spacing: 0.04em;
   text-transform: uppercase;
 `;
@@ -112,7 +112,8 @@ const CardTitle = styled.div`
 const CharacterName = styled.h1`
   margin: 0;
   font-size: clamp(18px, 2.8vh, 24px);
-  line-height: 1.15;
+  line-height: 1.2;
+  color: rgba(238, 248, 255, 0.98);
 `;
 
 const TopActionButton = styled.button`
@@ -125,9 +126,9 @@ const TopActionButton = styled.button`
 
   font-size: clamp(12px, 1.4vh, 14px);
   font-weight: 700;
-  border: 1px solid rgba(104, 217, 255, 0.36);
-  background: rgba(40, 138, 203, 0.28);
-  color: rgba(217, 244, 255, 0.98);
+  border: 1px solid rgba(122, 225, 255, 0.52);
+  background: rgba(37, 124, 187, 0.42);
+  color: rgba(234, 249, 255, 1);
 `;
 
 const StageArea = styled.div`
@@ -202,32 +203,32 @@ const BottomStats = styled.div`
   margin-top: clamp(6px, 1vh, 10px);
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 10px;
+  gap: 12px;
 `;
 
 const Stat = styled.div`
   padding: clamp(8px, 1vh, 10px) 12px;
   border-radius: 12px;
 
-  background: rgba(6, 31, 63, 0.52);
-  border: 1px solid rgba(126, 215, 255, 0.2);
+  background: rgba(4, 26, 53, 0.78);
+  border: 1px solid rgba(138, 221, 255, 0.34);
 `;
 
 const StatLabel = styled.div`
   font-size: clamp(12px, 1.35vh, 14px);
-  color: rgba(173, 225, 255, 0.72);
+  color: rgba(194, 236, 255, 0.86);
 `;
 
 const StatValue = styled.div`
   margin-top: 4px;
   font-size: clamp(14px, 2vh, 18px);
   font-weight: 800;
-  color: rgba(224, 245, 255, 0.98);
+  color: rgba(241, 250, 255, 0.99);
 `;
 
 const CardHint = styled.div`
   margin-top: clamp(6px, 0.8vh, 10px);
   font-size: clamp(12px, 1.3vh, 14px);
-  color: rgba(174, 220, 245, 0.78);
-  line-height: 1.35;
+  color: rgba(201, 236, 255, 0.92);
+  line-height: 1.45;
 `;
