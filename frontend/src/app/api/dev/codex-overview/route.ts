@@ -55,11 +55,11 @@ export async function GET() {
 
   try {
     const [charactersResponse, codexResponse] = await Promise.all([
-      fetch(`${backendApiUrl}/api/characters?includeInactive=true`, {
+      fetch(`${backendApiUrl}/characters?includeInactive=true`, {
         method: "GET",
         cache: "no-store",
       }),
-      fetch(`${backendApiUrl}/api/codex/me`, {
+      fetch(`${backendApiUrl}/codex/me`, {
         method: "GET",
         headers: {
           Authorization: `Bearer ${backendAuthToken}`,

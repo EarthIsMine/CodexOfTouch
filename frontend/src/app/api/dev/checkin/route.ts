@@ -29,7 +29,7 @@ export async function POST() {
   }
 
   try {
-    const response = await fetch(`${backendApiUrl}/api/user/checkin`, {
+    const response = await fetch(`${backendApiUrl}/user/checkin`, {
       method: "POST",
       headers: {
         Authorization: `Bearer ${backendAuthToken}`,

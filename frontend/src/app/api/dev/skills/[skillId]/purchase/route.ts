@@ -48,7 +48,7 @@ export async function POST(
     const paymentReference = payload.paymentReference || `ref_${randomUUID()}`;
 
     const response = await fetch(
-      `${backendApiUrl}/api/skills/${encodeURIComponent(skillId)}/purchase`,
+      `${backendApiUrl}/skills/${encodeURIComponent(skillId)}/purchase`,
       {
         method: "POST",
         headers: {

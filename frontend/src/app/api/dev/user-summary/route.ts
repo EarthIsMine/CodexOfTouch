@@ -32,7 +32,7 @@ export async function GET() {
   }
 
   try {
-    const response = await fetch(`${backendApiUrl}/api/user/me`, {
+    const response = await fetch(`${backendApiUrl}/user/me`, {
       method: "GET",
       headers: {
         Authorization: `Bearer ${backendAuthToken}`,

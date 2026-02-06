@@ -36,7 +36,7 @@ export async function GET() {
       headers.Authorization = `Bearer ${backendAuthToken}`;
     }
 
-    const response = await fetch(`${backendApiUrl}/api/characters/active`, {
+    const response = await fetch(`${backendApiUrl}/characters/active`, {
       method: "GET",
       headers,
       cache: "no-store",

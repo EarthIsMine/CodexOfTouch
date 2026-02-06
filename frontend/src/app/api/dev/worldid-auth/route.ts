@@ -43,7 +43,7 @@ export async function POST(request: Request) {
       );
     }
 
-    const response = await fetch(`${backendApiUrl}/api/auth/worldid`, {
+    const response = await fetch(`${backendApiUrl}/auth/worldid`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

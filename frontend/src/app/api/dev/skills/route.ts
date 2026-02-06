@@ -52,12 +52,12 @@ export async function GET() {
 
   try {
     const [skillsResponse, mySkillsResponse] = await Promise.all([
-      fetch(`${backendApiUrl}/api/skills`, {
+      fetch(`${backendApiUrl}/skills`, {
         method: "GET",
         cache: "no-store",
       }),
       backendAuthToken
-        ? fetch(`${backendApiUrl}/api/skills/my`, {
+        ? fetch(`${backendApiUrl}/skills/my`, {
             method: "GET",
             headers: {
               Authorization: `Bearer ${backendAuthToken}`,

@@ -39,7 +39,7 @@ export async function GET(request: Request) {
     const offset = url.searchParams.get("offset") || "0";
 
     const response = await fetch(
-      `${backendApiUrl}/api/pet/history?limit=${encodeURIComponent(limit)}&offset=${encodeURIComponent(offset)}`,
+      `${backendApiUrl}/pet/history?limit=${encodeURIComponent(limit)}&offset=${encodeURIComponent(offset)}`,
       {
         method: "GET",
         headers: {

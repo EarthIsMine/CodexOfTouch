@@ -33,7 +33,7 @@ export async function POST(
   try {
     const { skillId } = await context.params;
     const response = await fetch(
-      `${backendApiUrl}/api/skills/${encodeURIComponent(skillId)}/use`,
+      `${backendApiUrl}/skills/${encodeURIComponent(skillId)}/use`,
       {
         method: "POST",
         headers: {
