@@ -2,67 +2,175 @@
 
 import styled from "@emotion/styled";
 import Link from "next/link";
+import { useEffect, useMemo, useState } from "react";
 import { useTranslations } from "next-intl";
-import { useMemo, useState } from "react";
 
-type SkillId = "cooldown" | "dailyBoost" | "inputBlock";
+type MarketSkill = {
+  id: number;
+  name: string;
+  description: string;
+  effectType: string;
+  value: number;
+  durationSec: number;
+  priceWld: number;
+  isOwned: boolean;
+  isActivated: boolean;
+  activationRemainingTime: number;
+};
 
 export default function MarketPage() {
   const t = useTranslations("home");
-  const [wldBalance, setWldBalance] = useState(120);
-  const [ownedSkills, setOwnedSkills] = useState<Record<SkillId, boolean>>({
-    cooldown: false,
-    dailyBoost: false,
-    inputBlock: false,
-  });
-  const [notice, setNotice] = useState<string>("");
+  const [skills, setSkills] = useState<MarketSkill[]>([]);
+  const [notice, setNotice] = useState("");
+  const [loading, setLoading] = useState(true);
+  const [pendingSkillId, setPendingSkillId] = useState<number | null>(null);
+  const [authTestResult, setAuthTestResult] = useState("");
 
-  const skills = useMemo(
-    () =>
-      [
-        {
-          id: "cooldown" as const,
-          title: t("market.skills.cooldown.title"),
-          body: t("market.skills.cooldown.body"),
-          meta: t("market.skills.cooldown.meta"),
-          price: 35,
-        },
-        {
-          id: "dailyBoost" as const,
-          title: t("market.skills.dailyBoost.title"),
-          body: t("market.skills.dailyBoost.body"),
-          meta: t("market.skills.dailyBoost.meta"),
-          price: 60,
-        },
-        {
-          id: "inputBlock" as const,
-          title: t("market.skills.inputBlock.title"),
-          body: t("market.skills.inputBlock.body"),
-          meta: t("market.skills.inputBlock.meta"),
-          price: 45,
-        },
-      ] satisfies Array<{
-        id: SkillId;
-        title: string;
-        body: string;
-        meta: string;
-        price: number;
-      }>,
-    [t],
+  useEffect(() => {
+    let mounted = true;
+    const loadSkills = async () => {
+      try {
+        const response = await fetch("/api/dev/skills", {
+          method: "GET",
+          cache: "no-store",
+        });
+        const payload = (await response.json()) as {
+          ok: boolean;
+          error?: string;
+          data?: {
+            skills: MarketSkill[];
+          };
+        };
+
+        if (!mounted) {
+          return;
+        }
+
+        if (!response.ok || !payload.ok || !payload.data) {
+          setNotice(payload.error || t("market.loadFailed"));
+          return;
+        }
+
+        setSkills(payload.data.skills);
+      } catch {
+        if (mounted) {
+          setNotice(t("market.loadFailed"));
+        }
+      } finally {
+        if (mounted) {
+          setLoading(false);
+        }
+      }
+    };
+
+    void loadSkills();
+    return () => {
+      mounted = false;
+    };
+  }, [t]);
+
+  const ownedCount = useMemo(
+    () => skills.filter((skill) => skill.isOwned).length,
+    [skills],
   );
 
-  const buySkill = (skillId: SkillId, price: number, skillName: string) => {
-    if (ownedSkills[skillId]) {
-      return;
-    }
-    if (wldBalance < price) {
-      setNotice(t("market.insufficient"));
+  const buySkill = async (skillId: number, skillName: string) => {
+    if (pendingSkillId !== null) {
       return;
     }
 
-    setWldBalance((prev) => prev - price);
-    setOwnedSkills((prev) => ({ ...prev, [skillId]: true }));
-    setNotice(t("market.purchased", { skill: skillName }));
+    setPendingSkillId(skillId);
+    try {
+      const response = await fetch(`/api/dev/skills/${skillId}/purchase`, {
+        method: "POST",
+      });
+      const payload = (await response.json()) as {
+        ok: boolean;
+        error?: string;
+      };
+
+      if (!response.ok || !payload.ok) {
+        setNotice(payload.error || t("market.purchaseFailed"));
+        return;
+      }
+
+      setSkills((prev) =>
+        prev.map((skill) =>
+          skill.id === skillId
+            ? {
+                ...skill,
+                isOwned: true,
+                isActivated: true,
+              }
+            : skill,
+        ),
+      );
+      setNotice(t("market.purchased", { skill: skillName }));
+    } catch {
+      setNotice(t("market.purchaseFailed"));
+    } finally {
+      setPendingSkillId(null);
+    }
+  };
+
+  const activateSkill = async (skillId: number, skillName: string) => {
+    if (pendingSkillId !== null) {
+      return;
+    }
+
+    setPendingSkillId(skillId);
+    try {
+      const response = await fetch(`/api/dev/skills/${skillId}/use`, {
+        method: "POST",
+      });
+      const payload = (await response.json()) as {
+        ok: boolean;
+        error?: string;
+      };
+
+      if (!response.ok || !payload.ok) {
+        setNotice(payload.error || t("market.activateFailed"));
+        return;
+      }
+
+      setSkills((prev) =>
+        prev.map((skill) =>
+          skill.id === skillId ? { ...skill, isActivated: true } : skill,
+        ),
+      );
+      setNotice(t("market.activated", { skill: skillName }));
+    } catch {
+      setNotice(t("market.activateFailed"));
+    } finally {
+      setPendingSkillId(null);
+    }
+  };
+
+  const testBackendAuth = async () => {
+    setAuthTestResult("Testing...");
+    try {
+      const response = await fetch("/api/dev/backend-auth-test", {
+        method: "GET",
+      });
+      const payload = (await response.json()) as {
+        ok: boolean;
+        status?: number;
+        error?: string;
+      };
+
+      if (!response.ok || !payload.ok) {
+        setAuthTestResult(
+          `Failed (${payload.status ?? response.status}): ${payload.error ?? "Unknown error"}`,
+        );
+        return;
+      }
+
+      setAuthTestResult(`Success (${payload.status ?? response.status})`);
+    } catch (error) {
+      const message =
+        error instanceof Error ? error.message : "Unknown client error";
+      setAuthTestResult(`Failed: ${message}`);
+    }
   };
 
   return (
@@ -79,41 +187,48 @@ export default function MarketPage() {
             <Subtitle>{t("market.subtitle")}</Subtitle>
           </TitleBlock>
           <BalanceCard>
-            <BalanceLabel>{t("market.balanceLabel")}</BalanceLabel>
-            <BalanceValue>
-              {wldBalance} <BalanceUnit>{t("market.balanceUnit")}</BalanceUnit>
-            </BalanceValue>
+            <BalanceLabel>{t("market.ownedCountLabel")}</BalanceLabel>
+            <BalanceValue>{ownedCount}</BalanceValue>
           </BalanceCard>
         </HeaderRow>
 
         <SkillGrid>
-          {skills.map((skill) => {
-            const isOwned = ownedSkills[skill.id];
-            const isDisabled = isOwned || wldBalance < skill.price;
-
-            return (
-              <SkillCard key={skill.id}>
-                <SkillTop>
-                  <SkillName>{skill.title}</SkillName>
-                  <SkillPrice>{skill.price} WLD</SkillPrice>
-                </SkillTop>
-                <SkillBody>{skill.body}</SkillBody>
-                <SkillMeta>{skill.meta}</SkillMeta>
-                <BuyButton
-                  type="button"
-                  onClick={() => buySkill(skill.id, skill.price, skill.title)}
-                  disabled={isDisabled}
-                  data-owned={isOwned}
-                >
-                  {isOwned
-                    ? t("market.owned")
-                    : wldBalance < skill.price
-                      ? t("market.insufficient")
-                      : t("market.buy")}
-                </BuyButton>
-              </SkillCard>
-            );
-          })}
+          {loading ? <LoadingText>{t("market.loading")}</LoadingText> : null}
+          {!loading &&
+            skills.map((skill) => {
+              const isPending = pendingSkillId === skill.id;
+              return (
+                <SkillCard key={skill.id}>
+                  <SkillTop>
+                    <SkillName>{skill.name}</SkillName>
+                    <SkillPrice>{skill.priceWld} WLD</SkillPrice>
+                  </SkillTop>
+                  <SkillBody>{skill.description}</SkillBody>
+                  <SkillMeta>
+                    {skill.effectType} · {skill.durationSec}s
+                  </SkillMeta>
+                  <ButtonRow>
+                    <BuyButton
+                      type="button"
+                      onClick={() => buySkill(skill.id, skill.name)}
+                      disabled={skill.isOwned || isPending}
+                      data-owned={skill.isOwned}
+                    >
+                      {skill.isOwned ? t("market.owned") : t("market.buy")}
+                    </BuyButton>
+                    <UseButton
+                      type="button"
+                      onClick={() => activateSkill(skill.id, skill.name)}
+                      disabled={!skill.isOwned || skill.isActivated || isPending}
+                    >
+                      {skill.isActivated
+                        ? t("market.alreadyActivated")
+                        : t("market.activate")}
+                    </UseButton>
+                  </ButtonRow>
+                </SkillCard>
+              );
+            })}
         </SkillGrid>
 
         <PolicyBlock>
@@ -124,6 +239,13 @@ export default function MarketPage() {
         </PolicyBlock>
 
         {notice ? <Notice>{notice}</Notice> : null}
+
+        <TestBlock>
+          <TestButton type="button" onClick={testBackendAuth}>
+            Test Backend Auth
+          </TestButton>
+          {authTestResult ? <TestResult>{authTestResult}</TestResult> : null}
+        </TestBlock>
       </MarketPanel>
     </Main>
   );
@@ -222,11 +344,6 @@ const BalanceValue = styled.div`
   color: rgba(236, 248, 255, 0.98);
 `;
 
-const BalanceUnit = styled.span`
-  font-size: 12px;
-  color: rgba(204, 239, 255, 0.84);
-`;
-
 const SkillGrid = styled.div`
   display: grid;
   gap: 10px;
@@ -272,8 +389,14 @@ const SkillMeta = styled.p`
   color: rgba(166, 212, 236, 0.82);
 `;
 
-const BuyButton = styled.button`
+const ButtonRow = styled.div`
   margin-top: 10px;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+`;
+
+const BuyButton = styled.button`
   height: 34px;
   border-radius: 10px;
   padding: 0 12px;
@@ -293,6 +416,11 @@ const BuyButton = styled.button`
     border-color: rgba(110, 225, 174, 0.46);
     background: rgba(27, 112, 82, 0.58);
   }
+`;
+
+const UseButton = styled(BuyButton)`
+  border-color: rgba(198, 222, 255, 0.4);
+  background: rgba(40, 78, 122, 0.56);
 `;
 
 const PolicyBlock = styled.section`
@@ -322,6 +450,37 @@ const Notice = styled.div`
   border: 1px solid rgba(124, 215, 255, 0.24);
   background: rgba(7, 39, 73, 0.66);
   padding: 8px 10px;
+  font-size: 12px;
+  color: rgba(213, 242, 255, 0.95);
+`;
+
+const LoadingText = styled.div`
+  font-size: 13px;
+  color: rgba(213, 242, 255, 0.95);
+`;
+
+const TestBlock = styled.section`
+  border-radius: 10px;
+  border: 1px solid rgba(124, 215, 255, 0.24);
+  background: rgba(7, 39, 73, 0.5);
+  padding: 10px;
+  display: grid;
+  gap: 8px;
+`;
+
+const TestButton = styled.button`
+  height: 34px;
+  border-radius: 9px;
+  padding: 0 12px;
+  border: 1px solid rgba(121, 220, 255, 0.42);
+  background: rgba(21, 87, 141, 0.58);
+  color: rgba(231, 248, 255, 0.96);
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+`;
+
+const TestResult = styled.div`
   font-size: 12px;
   color: rgba(213, 242, 255, 0.95);
 `;

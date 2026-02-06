@@ -43,7 +43,7 @@ export function BottomCTASection({
               : t("cta.pet")
             : t("cta.verify")}
         </CTAButton>
-        <ActionCaption>{t("cta.petCost", { amount: 100 })}</ActionCaption>
+        <ActionCaption>{t("cta.petCost", { amount: 1 })}</ActionCaption>
       </PrimaryAction>
     </BottomCTA>
   );

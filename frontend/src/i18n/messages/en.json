@@ -18,6 +18,7 @@
       "petCost": "({amount} Stardust per touch)",
       "verify": "Verify with World ID",
       "dailyCheckIn": "Check-in",
+      "checkingIn": "Checking in...",
       "note": "No pay-to-win.",
       "exploreCodex": "Open Codex",
       "dailyCheckInDone": "Check-in Complete"
@@ -40,17 +41,20 @@
       "collapseInfo": "Hide details",
       "checkinSubWithReward": "Daily check-in available (+{amount} Stardust)",
       "checkinAlreadyDone": "Daily check-in already completed for today.",
-      "checkinSuccess": "Daily check-in complete: +{amount} Stardust"
+      "checkinSuccess": "Daily check-in complete: +{amount} Stardust",
+      "checkinFailed": "Failed to process daily check-in."
     },
     "feed": {
       "success": "Success! {name} secured by {user}. {action} in progress.",
-      "fail": "Petting failed. Your next spin starts in {seconds}s."
+      "fail": "Petting failed. Your next spin starts in {seconds}s.",
+      "jackpotWin": "{name} jackpot awarded to {user} (+{amount})."
     },
     "collection": {
       "title": "Collection",
       "level": "Lv.{level}",
       "owned": "Owned",
-      "locked": "Locked"
+      "locked": "Locked",
+      "loading": "Loading..."
     },
     "dock": {
       "home": "Home",
@@ -61,11 +65,19 @@
       "title": "WLD Skill Market",
       "subtitle": "Utility-only skills. Probability is unchanged.",
       "balanceLabel": "Your Balance",
+      "ownedCountLabel": "Owned Skills",
       "balanceUnit": "WLD",
       "buy": "Buy with WLD",
+      "activate": "Activate",
+      "alreadyActivated": "Activated",
       "owned": "Owned",
       "insufficient": "Insufficient WLD",
       "purchased": "{skill} purchased successfully.",
+      "activated": "{skill} activated.",
+      "loading": "Loading skills...",
+      "loadFailed": "Failed to load skills.",
+      "purchaseFailed": "Failed to purchase skill.",
+      "activateFailed": "Failed to activate skill.",
       "principleTitle": "Skill Principle",
       "principleBody": "Skills improve play convenience only. They do not alter success probability.",
       "onchainTitle": "On-chain Verifiability",

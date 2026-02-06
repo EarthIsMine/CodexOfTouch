@@ -2,21 +2,73 @@
 
 import styled from "@emotion/styled";
 import Link from "next/link";
+import { useEffect, useMemo, useState } from "react";
 import { useTranslations } from "next-intl";
 
-const collection = [
-  { id: "nx-01", level: 8, owned: true },
-  { id: "nx-02", level: 8, owned: true },
-  { id: "nx-03", level: 7, owned: false },
-  { id: "nx-04", level: 8, owned: true },
-  { id: "nx-05", level: 2, owned: false },
-  { id: "nx-06", level: 3, owned: true },
-  { id: "nx-07", level: 5, owned: true },
-  { id: "nx-08", level: 9, owned: false },
-];
+type CollectionItem = {
+  id: number;
+  name: string;
+  level: number;
+  owned: boolean;
+  isActive: boolean;
+};
 
 export default function CodexPage() {
   const t = useTranslations("home");
+  const [collection, setCollection] = useState<CollectionItem[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    let mounted = true;
+
+    const loadCodex = async () => {
+      try {
+        const response = await fetch("/api/dev/codex-overview", {
+          method: "GET",
+          cache: "no-store",
+        });
+        const payload = (await response.json()) as {
+          ok: boolean;
+          data?: {
+            items: Array<{
+              id: number;
+              name: string;
+              level: number;
+              owned: boolean;
+              isActive: boolean;
+            }>;
+          };
+        };
+        if (!mounted || !response.ok || !payload.ok || !payload.data) {
+          return;
+        }
+        setCollection(payload.data.items);
+      } catch {
+        // Keep empty fallback list if request fails.
+      } finally {
+        if (mounted) {
+          setLoading(false);
+        }
+      }
+    };
+
+    void loadCodex();
+    return () => {
+      mounted = false;
+    };
+  }, []);
+
+  const visibleCollection = useMemo(
+    () =>
+      collection.length > 0
+        ? collection
+        : [
+            { id: 1, name: "Nyx", level: 8, owned: true, isActive: true },
+            { id: 2, name: "Astra", level: 6, owned: false, isActive: false },
+            { id: 3, name: "Puddle", level: 5, owned: false, isActive: false },
+          ],
+    [collection],
+  );
 
   return (
     <Main>
@@ -26,10 +78,11 @@ export default function CodexPage() {
       <CollectionPanel>
         <CollectionHeader>
           <CollectionTitle>{t("collection.title")}</CollectionTitle>
+          {loading ? <LoadingText>{t("collection.loading")}</LoadingText> : null}
         </CollectionHeader>
         <CollectionGrid>
-          {collection.map((pet, index) => (
-            <PetCard key={pet.id} data-owned={pet.owned}>
+          {visibleCollection.map((pet, index) => (
+            <PetCard key={pet.id} data-owned={pet.owned} data-active={pet.isActive}>
               <PetThumb data-index={index} />
               <PetMeta>
                 <PetLevel>{t("collection.level", { level: pet.level })}</PetLevel>
@@ -37,6 +90,7 @@ export default function CodexPage() {
                   {pet.owned ? t("collection.owned") : t("collection.locked")}
                 </PetState>
               </PetMeta>
+              <PetName>{pet.name}</PetName>
             </PetCard>
           ))}
         </CollectionGrid>
@@ -107,6 +161,10 @@ const PetCard = styled.div`
   &[data-owned="false"] {
     opacity: 0.6;
   }
+
+  &[data-active="true"] {
+    box-shadow: 0 0 20px rgba(95, 218, 255, 0.24);
+  }
 `;
 
 const PetThumb = styled.div`
@@ -161,4 +219,16 @@ const PetState = styled.span`
   font-size: 13px;
   color: rgba(213, 243, 255, 0.88);
   text-transform: uppercase;
+`;
+
+const PetName = styled.div`
+  margin-top: 4px;
+  padding: 0 2px;
+  font-size: 12px;
+  color: rgba(184, 229, 251, 0.92);
+`;
+
+const LoadingText = styled.span`
+  font-size: 12px;
+  color: rgba(187, 230, 250, 0.84);
 `;

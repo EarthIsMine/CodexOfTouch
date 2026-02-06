@@ -2,27 +2,27 @@
 
 import styled from "@emotion/styled";
 import { useTranslations } from "next-intl";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import CharacterStatusCard from "@/ui/cards/CharacterStatusCard";
 import InfoStatCard from "@/ui/cards/InfoStatCard";
 import ToastMessage from "@/ui/primitives/ToastMessage";
 
 const DAILY_CHECK_IN_REWARD = 20;
-const STORAGE_SOFT_CURRENCY = "mockSoftCurrency";
-const STORAGE_LAST_CHECKIN = "mockLastCheckInDate";
+const FALLBACK_JACKPOT_POOL = 238;
+const FALLBACK_JACKPOT_SECONDS = 142;
 
 export default function HomePage() {
   const t = useTranslations("home");
   const [isInfoExpanded, setIsInfoExpanded] = useState(false);
   const cooldownSec = 0;
-  const [softCurrency, setSoftCurrency] = useState(
-    () => readSoftCurrencyFromStorage() ?? 12,
+  const [softCurrency, setSoftCurrency] = useState(12);
+  const [lastCheckInDate, setLastCheckInDate] = useState<string | null>(null);
+  const [jackpotPool, setJackpotPool] = useState(FALLBACK_JACKPOT_POOL);
+  const [jackpotRemainingSec, setJackpotRemainingSec] = useState(
+    FALLBACK_JACKPOT_SECONDS,
   );
-  const [lastCheckInDate, setLastCheckInDate] = useState<string | null>(
-    () => readCheckInDateFromStorage(),
-  );
-  const poolAmount = 238;
-  const jackpotRemainingSec = 142;
+  const [poolAmount, setPoolAmount] = useState(FALLBACK_JACKPOT_POOL);
+  const [isCheckingIn, setIsCheckingIn] = useState(false);
   const [checkInNotice, setCheckInNotice] = useState("");
   const [toastMessage, setToastMessage] = useState("");
   const toastTimerRef = useRef<number | null>(null);
@@ -30,24 +30,50 @@ export default function HomePage() {
 
   const canDailyCheckIn = lastCheckInDate !== todayKey;
 
-  const handleDailyCheckIn = () => {
+  const handleDailyCheckIn = async () => {
+    if (isCheckingIn) {
+      return;
+    }
+
     if (!canDailyCheckIn) {
       setCheckInNotice(t("card.checkinAlreadyDone"));
       return;
     }
 
-    const nextCurrency = softCurrency + DAILY_CHECK_IN_REWARD;
-    setSoftCurrency(nextCurrency);
-    setLastCheckInDate(todayKey);
-    const successMessage = t("card.checkinSuccess", {
-      amount: DAILY_CHECK_IN_REWARD,
-    });
-    setCheckInNotice(successMessage);
-    showToast(successMessage);
+    setIsCheckingIn(true);
+    try {
+      const response = await fetch("/api/dev/checkin", {
+        method: "POST",
+      });
+      const payload = (await response.json()) as {
+        ok: boolean;
+        error?: string;
+        data?: {
+          reward: number;
+          totalBalance: number;
+        };
+      };
 
-    if (typeof window !== "undefined") {
-      window.localStorage.setItem(STORAGE_SOFT_CURRENCY, String(nextCurrency));
-      window.localStorage.setItem(STORAGE_LAST_CHECKIN, todayKey);
+      if (!response.ok || !payload.ok || !payload.data) {
+        const errorMessage = payload.error || t("card.checkinFailed");
+        setCheckInNotice(errorMessage);
+        showToast(errorMessage);
+        return;
+      }
+
+      setSoftCurrency(payload.data.totalBalance);
+      setLastCheckInDate(todayKey);
+      const successMessage = t("card.checkinSuccess", {
+        amount: payload.data.reward,
+      });
+      setCheckInNotice(successMessage);
+      showToast(successMessage);
+    } catch {
+      const errorMessage = t("card.checkinFailed");
+      setCheckInNotice(errorMessage);
+      showToast(errorMessage);
+    } finally {
+      setIsCheckingIn(false);
     }
   };
 
@@ -62,19 +88,83 @@ export default function HomePage() {
     }, 1800);
   };
 
+  useEffect(() => {
+    let mounted = true;
+
+    const loadHomeData = async () => {
+      try {
+        const [homeStatsResponse, userSummaryResponse] = await Promise.all([
+          fetch("/api/dev/home-stats", {
+            method: "GET",
+            cache: "no-store",
+          }),
+          fetch("/api/dev/user-summary", {
+            method: "GET",
+            cache: "no-store",
+          }),
+        ]);
+        const homeStatsPayload = (await homeStatsResponse.json()) as {
+          ok: boolean;
+          data?: {
+            jackpotPool: number;
+            jackpot: number;
+            poolAmount: number;
+          };
+        };
+        const userSummaryPayload = (await userSummaryResponse.json()) as {
+          ok: boolean;
+          data?: {
+            internalBalance: number;
+            lastCheckIn: string | null;
+          };
+        };
+
+        if (!mounted) {
+          return;
+        }
+
+        if (homeStatsResponse.ok && homeStatsPayload.ok && homeStatsPayload.data) {
+          setJackpotPool(homeStatsPayload.data.jackpotPool);
+          setJackpotRemainingSec(homeStatsPayload.data.jackpot);
+          setPoolAmount(homeStatsPayload.data.poolAmount);
+        }
+
+        if (
+          userSummaryResponse.ok &&
+          userSummaryPayload.ok &&
+          userSummaryPayload.data
+        ) {
+          setSoftCurrency(userSummaryPayload.data.internalBalance);
+          setLastCheckInDate(toDateKey(userSummaryPayload.data.lastCheckIn));
+        }
+      } catch {
+        // Fallback values remain when backend test route is unavailable.
+      }
+    };
+
+    void loadHomeData();
+
+    return () => {
+      mounted = false;
+    };
+  }, []);
+
+  const formattedJackpotPool = jackpotPool.toLocaleString();
   const formattedPool = poolAmount.toLocaleString();
   const formattedJackpotTime = formatMmSs(jackpotRemainingSec);
 
   const heroCardText = {
     title: t("card.activeTitle"),
     characterName: t("card.characterName"),
-    topActionLabel: canDailyCheckIn
-      ? t("cta.dailyCheckIn")
-      : t("cta.dailyCheckInDone"),
-    topActionDisabled: !canDailyCheckIn,
+    topActionLabel: isCheckingIn
+      ? t("cta.checkingIn")
+      : canDailyCheckIn
+        ? t("cta.dailyCheckIn")
+        : t("cta.dailyCheckInDone"),
+    topActionDisabled: isCheckingIn || !canDailyCheckIn,
     onTopActionClick: handleDailyCheckIn,
     jackpotPoolLabel: t("card.jackpotPool"),
-    jackpotPoolValue: formattedPool,
+    jackpotPoolValue: formattedJackpotPool,
     primaryStatLabel: t("card.jackpot"),
     primaryStatValue: formattedJackpotTime,
     secondaryStatLabel: t("card.pool"),
@@ -125,23 +215,18 @@ function getTodayKey() {
   return `${y}-${m}-${d}`;
 }
 
-function readSoftCurrencyFromStorage() {
-  if (typeof window === "undefined") {
+function toDateKey(isoDateTime: string | null) {
+  if (!isoDateTime) {
     return null;
   }
-  const raw = window.localStorage.getItem(STORAGE_SOFT_CURRENCY);
-  if (!raw) {
+  const date = new Date(isoDateTime);
+  if (Number.isNaN(date.getTime())) {
     return null;
   }
-  const parsed = Number(raw);
-  return Number.isFinite(parsed) ? parsed : null;
-}
-
-function readCheckInDateFromStorage() {
-  if (typeof window === "undefined") {
-    return null;
-  }
-  return window.localStorage.getItem(STORAGE_LAST_CHECKIN);
+  const y = date.getFullYear();
+  const m = String(date.getMonth() + 1).padStart(2, "0");
+  const d = String(date.getDate()).padStart(2, "0");
+  return `${y}-${m}-${d}`;
 }
 
 const Main = styled.main<{ $expanded: boolean }>`

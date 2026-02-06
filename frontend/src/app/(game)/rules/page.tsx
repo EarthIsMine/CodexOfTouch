@@ -2,11 +2,21 @@
 
 import styled from "@emotion/styled";
 import Link from "next/link";
+import { useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
 import AccordionPanel from "@/ui/primitives/AccordionPanel";
 
 export default function RulesPage() {
   const t = useTranslations("home");
+  const [feed, setFeed] = useState<
+    Array<{
+      roundId: number;
+      characterName: string;
+      winnerWallet: string;
+      amount: number;
+      committedAt: string;
+    }>
+  >([]);
   const rules = [
     {
       title: t("rulesPage.items.jackpot.title"),
@@ -25,6 +35,43 @@ export default function RulesPage() {
       body: t("rulesPage.items.checkin.body"),
     },
   ];
+
+  useEffect(() => {
+    let mounted = true;
+    const loadFeed = async () => {
+      try {
+        const response = await fetch("/api/dev/jackpot-history?limit=12", {
+          method: "GET",
+          cache: "no-store",
+        });
+        const payload = (await response.json()) as {
+          ok: boolean;
+          data?: {
+            history: Array<{
+              roundId: number;
+              characterName: string;
+              winnerWallet: string;
+              amount: number;
+              committedAt: string;
+            }>;
+          };
+        };
+
+        if (!mounted || !response.ok || !payload.ok || !payload.data) {
+          return;
+        }
+
+        setFeed(payload.data.history);
+      } catch {
+        // Keep fallback lines when history request fails.
+      }
+    };
+
+    void loadFeed();
+    return () => {
+      mounted = false;
+    };
+  }, []);
 
   return (
     <Main>
@@ -55,16 +102,30 @@ export default function RulesPage() {
         fillWhenOpen
       >
         <FeedContent>
-          <FeedLine data-tone="ok">
-            {t("feed.success", {
-              name: "Puddle",
-              user: "Mingh",
-              action: "Minting",
-            })}
-          </FeedLine>
-          <FeedLine data-tone="warn">
-            {t("feed.fail", { seconds: 30 })}
-          </FeedLine>
+          {feed.length === 0 ? (
+            <>
+              <FeedLine data-tone="ok">
+                {t("feed.success", {
+                  name: "Puddle",
+                  user: "Mingh",
+                  action: "Minting",
+                })}
+              </FeedLine>
+              <FeedLine data-tone="warn">
+                {t("feed.fail", { seconds: 30 })}
+              </FeedLine>
+            </>
+          ) : (
+            feed.map((item) => (
+              <FeedLine key={item.roundId} data-tone="ok">
+                {t("feed.jackpotWin", {
+                  name: item.characterName,
+                  user: item.winnerWallet,
+                  amount: item.amount.toLocaleString(),
+                })}
+              </FeedLine>
+            ))
+          )}
         </FeedContent>
       </FeedPanel>
     </Main>

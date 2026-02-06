@@ -18,6 +18,7 @@
       "petCost": "(터치 1회당 {amount} 스타더스트)",
       "verify": "World ID로 인증하기",
       "dailyCheckIn": "출석 체크",
+      "checkingIn": "출석 처리 중...",
       "note": "과금으로 승부가 갈리지 않습니다.",
       "exploreCodex": "도감 보기",
       "dailyCheckInDone": "출석 완료"
@@ -40,17 +41,20 @@
       "collapseInfo": "정보 접기",
       "checkinSubWithReward": "출석 체크 가능 (+{amount} 스타더스트)",
       "checkinAlreadyDone": "오늘 출석 체크를 이미 완료했습니다.",
-      "checkinSuccess": "출석 체크 완료: +{amount} 스타더스트"
+      "checkinSuccess": "출석 체크 완료: +{amount} 스타더스트",
+      "checkinFailed": "출석 체크 처리에 실패했습니다."
     },
     "feed": {
       "success": "성공! {name} 캐릭터를 {user} 님이 확보했습니다. {action} 진행 중입니다.",
-      "fail": "터치에 실패했습니다. {seconds}초 후 다시 시도할 수 있습니다."
+      "fail": "터치에 실패했습니다. {seconds}초 후 다시 시도할 수 있습니다.",
+      "jackpotWin": "{name} 잭팟이 {user}에게 지급되었습니다 (+{amount})."
     },
     "collection": {
       "title": "컬렉션",
       "level": "Lv.{level}",
       "owned": "보유",
-      "locked": "잠김"
+      "locked": "잠김",
+      "loading": "불러오는 중..."
     },
     "dock": {
       "home": "홈",
@@ -61,11 +65,19 @@
       "title": "WLD 스킬 마켓",
       "subtitle": "확률은 그대로, 플레이 편의만 강화합니다.",
       "balanceLabel": "보유 잔액",
+      "ownedCountLabel": "보유 스킬",
       "balanceUnit": "WLD",
       "buy": "WLD로 구매",
+      "activate": "활성화",
+      "alreadyActivated": "활성화됨",
       "owned": "보유 중",
       "insufficient": "WLD 부족",
       "purchased": "{skill} 구매 완료",
+      "activated": "{skill} 활성화 완료",
+      "loading": "스킬을 불러오는 중...",
+      "loadFailed": "스킬 목록을 불러오지 못했습니다.",
+      "purchaseFailed": "스킬 구매에 실패했습니다.",
+      "activateFailed": "스킬 활성화에 실패했습니다.",
       "principleTitle": "스킬 원칙",
       "principleBody": "스킬은 플레이 편의성만 개선하며 성공 확률은 변경하지 않습니다.",
       "onchainTitle": "온체인 검증",
