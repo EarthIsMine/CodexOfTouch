@@ -53,7 +53,7 @@ const BrandDot = styled.div`
 const BrandText = styled.div`
   font-family: var(--font-heading);
   letter-spacing: var(--letter-spacing-heading);
-  font-size: 15px;
+  font-size: 16px;
   font-weight: 800;
 `;
 
@@ -64,13 +64,13 @@ const HeaderRight = styled.div`
 `;
 
 const StatusPill = styled.div`
-  height: 30px;
+  height: 32px;
   padding: 0 var(--space-3);
   border-radius: 999px;
   display: inline-flex;
   align-items: center;
 
-  font-size: 12px;
+  font-size: 13px;
   letter-spacing: var(--letter-spacing-body);
   color: rgba(255, 255, 255, 0.9);
 

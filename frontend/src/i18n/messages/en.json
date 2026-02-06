@@ -34,7 +34,9 @@
       "cooldownValue": "{seconds}s",
       "ready": "Ready",
       "checkinSub": "Daily check-in to earn more",
-      "cooldownSub": "30s after fail"
+      "cooldownSub": "30s after fail",
+      "expandInfo": "Show details",
+      "collapseInfo": "Hide details"
     },
     "feed": {
       "success": "Success! {name} secured by {user}. {action} in progress.",

@@ -34,7 +34,9 @@
       "cooldownValue": "{seconds}초",
       "ready": "바로 가능",
       "checkinSub": "출석 체크로 더 모으세요",
-      "cooldownSub": "실패 후 30초 대기"
+      "cooldownSub": "실패 후 30초 대기",
+      "expandInfo": "정보 펼치기",
+      "collapseInfo": "정보 접기"
     },
     "feed": {
       "success": "성공! {name} 캐릭터를 {user} 님이 확보했습니다. {action} 진행 중입니다.",

@@ -103,7 +103,7 @@ const HeroMeta = styled.div`
 `;
 
 const CardTitle = styled.div`
-  font-size: clamp(12px, 1.4vh, 14px);
+  font-size: clamp(13px, 1.5vh, 15px);
   color: rgba(205, 236, 255, 0.92);
   letter-spacing: 0.04em;
   text-transform: uppercase;
@@ -111,7 +111,7 @@ const CardTitle = styled.div`
 
 const CharacterName = styled.h1`
   margin: 0;
-  font-size: clamp(18px, 2.8vh, 24px);
+  font-size: clamp(20px, 3vh, 26px);
   line-height: 1.2;
   color: rgba(238, 248, 255, 0.98);
 `;
@@ -119,12 +119,15 @@ const CharacterName = styled.h1`
 const TopActionButton = styled.button`
   height: clamp(30px, 3.6vh, 36px);
   padding: 0 14px;
+  width: fit-content;
+  max-width: 100%;
+  flex-shrink: 0;
   border-radius: 999px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
 
-  font-size: clamp(12px, 1.4vh, 14px);
+  font-size: clamp(13px, 1.5vh, 15px);
   font-weight: 700;
   border: 1px solid rgba(122, 225, 255, 0.52);
   background: rgba(37, 124, 187, 0.42);
@@ -215,20 +218,20 @@ const Stat = styled.div`
 `;
 
 const StatLabel = styled.div`
-  font-size: clamp(12px, 1.35vh, 14px);
+  font-size: clamp(13px, 1.45vh, 15px);
   color: rgba(194, 236, 255, 0.86);
 `;
 
 const StatValue = styled.div`
   margin-top: 4px;
-  font-size: clamp(14px, 2vh, 18px);
+  font-size: clamp(15px, 2.1vh, 19px);
   font-weight: 800;
   color: rgba(241, 250, 255, 0.99);
 `;
 
 const CardHint = styled.div`
   margin-top: clamp(6px, 0.8vh, 10px);
-  font-size: clamp(12px, 1.3vh, 14px);
+  font-size: clamp(13px, 1.4vh, 15px);
   color: rgba(201, 236, 255, 0.92);
   line-height: 1.45;
 `;

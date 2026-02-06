@@ -62,7 +62,7 @@ const FlowLink = styled(Link)`
   border: 1px solid rgba(113, 221, 255, 0.34);
   color: rgba(205, 241, 255, 0.92);
   background: rgba(9, 40, 70, 0.62);
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 700;
   letter-spacing: 0.03em;
   display: inline-flex;
@@ -86,7 +86,7 @@ const CollectionHeader = styled.div`
 
 const CollectionTitle = styled.h2`
   margin: 0;
-  font-size: 17px;
+  font-size: 18px;
   letter-spacing: 0.04em;
   text-transform: uppercase;
   color: rgba(178, 230, 255, 0.9);
@@ -153,12 +153,12 @@ const PetMeta = styled.div`
 `;
 
 const PetLevel = styled.span`
-  font-size: 13px;
+  font-size: 14px;
   color: rgba(164, 218, 244, 0.84);
 `;
 
 const PetState = styled.span`
-  font-size: 12px;
+  font-size: 13px;
   color: rgba(213, 243, 255, 0.88);
   text-transform: uppercase;
 `;
