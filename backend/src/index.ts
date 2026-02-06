@@ -1,12 +1,17 @@
 import dotenv from 'dotenv';
 dotenv.config();
 
+import { createServer } from 'http';
 import app from './app';
 import { config } from './config/env';
 import logger from './config/logger';
 import prisma from './config/database';
 import redis from './config/redis';
 import jackpotTimer from './jobs/jackpot-timer';
+import {
+  closeJackpotWebSockets,
+  handleJackpotWebSocketUpgrade,
+} from './realtime/jackpot-ws';
 
 const PORT = config.port;
 
@@ -23,12 +28,22 @@ async function startServer() {
     // Start background jobs
     jackpotTimer.start();
 
-    // Start server
-    const server = app.listen(PORT, () => {
+    // Start HTTP + WebSocket server
+    const server = createServer(app);
+    server.on('upgrade', (req, socket) => {
+      const handled = handleJackpotWebSocketUpgrade(req, socket);
+      if (!handled) {
+        socket.write('HTTP/1.1 404 Not Found\r\n\r\n');
+        socket.destroy();
+      }
+    });
+
+    server.listen(PORT, () => {
       logger.info(`🚀 Server running on port ${PORT}`);
       logger.info(`📝 Environment: ${config.nodeEnv}`);
       logger.info(`🌍 Health check: http://localhost:${PORT}/health`);
       logger.info(`📡 API base URL: http://localhost:${PORT}/api`);
+      logger.info(`🔌 WS jackpot URL: ws://localhost:${PORT}/ws/jackpot`);
     });
 
     // Graceful shutdown
@@ -41,6 +56,7 @@ async function startServer() {
 
         // Stop background jobs
         jackpotTimer.stop();
+        closeJackpotWebSockets();
 
         // Close database connections
         await prisma.$disconnect();

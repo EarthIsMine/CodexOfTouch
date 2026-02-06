@@ -11,6 +11,7 @@ import skillService from './skill.service';
 import jackpotService from './jackpot.service';
 import codexService from './codex.service';
 import logger from '@/config/logger';
+import { broadcastJackpotUpdate } from '@/realtime/jackpot-ws';
 
 export class PetService {
   async performPet(userId: string, characterId: number, skillId?: number): Promise<PetResult> {
@@ -137,6 +138,12 @@ export class PetService {
 
     if (success) {
       result.codexUnlocked = codexUnlocked;
+      broadcastJackpotUpdate({
+        characterId,
+        currentPool: updatedJackpot.currentPool,
+        timeRemaining,
+        lastPetAt: updatedJackpot.lastPetAt?.toISOString() ?? null,
+      });
     } else {
       const cooldownUntil = await redis.get(cooldownKey);
       if (cooldownUntil) {
