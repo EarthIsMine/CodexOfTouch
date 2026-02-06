@@ -82,6 +82,71 @@ const BackgroundStars = styled.div`
       transparent 41%
     ),
     radial-gradient(
+      1px 1px at 24% 40%,
+      rgba(255, 255, 255, 0.58) 40%,
+      transparent 41%
+    ),
+    radial-gradient(
+      1px 1px at 39% 74%,
+      rgba(255, 255, 255, 0.52) 40%,
+      transparent 41%
+    ),
+    radial-gradient(
+      1px 1px at 58% 44%,
+      rgba(255, 255, 255, 0.56) 40%,
+      transparent 41%
+    ),
+    radial-gradient(
+      1px 1px at 69% 16%,
+      rgba(255, 255, 255, 0.54) 40%,
+      transparent 41%
+    ),
+    radial-gradient(
+      1px 1px at 84% 72%,
+      rgba(255, 255, 255, 0.5) 40%,
+      transparent 41%
+    ),
+    radial-gradient(
+      1px 1px at 9% 52%,
+      rgba(255, 255, 255, 0.48) 40%,
+      transparent 41%
+    ),
+    radial-gradient(
+      1px 1px at 33% 10%,
+      rgba(255, 255, 255, 0.46) 40%,
+      transparent 41%
+    ),
+    radial-gradient(
+      1px 1px at 56% 92%,
+      rgba(255, 255, 255, 0.44) 40%,
+      transparent 41%
+    ),
+    radial-gradient(
+      1px 1px at 14% 66%,
+      rgba(255, 255, 255, 0.5) 40%,
+      transparent 41%
+    ),
+    radial-gradient(
+      1px 1px at 41% 48%,
+      rgba(255, 255, 255, 0.52) 40%,
+      transparent 41%
+    ),
+    radial-gradient(
+      1px 1px at 63% 8%,
+      rgba(255, 255, 255, 0.48) 40%,
+      transparent 41%
+    ),
+    radial-gradient(
+      1px 1px at 74% 70%,
+      rgba(255, 255, 255, 0.5) 40%,
+      transparent 41%
+    ),
+    radial-gradient(
+      1px 1px at 92% 42%,
+      rgba(255, 255, 255, 0.46) 40%,
+      transparent 41%
+    ),
+    radial-gradient(
       2px 2px at 52% 14%,
       rgba(124, 111, 246, 0.55) 35%,
       transparent 36%
@@ -92,8 +157,8 @@ const BackgroundStars = styled.div`
       transparent 36%
     );
 
-  opacity: 0.5;
-  filter: blur(0.2px);
+  opacity: 0.64;
+  filter: blur(0.14px) brightness(1.16);
   animation: twinkle 8s ease-in-out infinite;
 
   &::before {
@@ -135,13 +200,42 @@ const BackgroundStars = styled.div`
     filter: blur(0.4px);
   }
 
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(
+        8px 8px at 22% 34%,
+        rgba(196, 236, 255, 0.28),
+        rgba(196, 236, 255, 0) 74%
+      ),
+      radial-gradient(
+        10px 10px at 48% 18%,
+        rgba(124, 111, 246, 0.24),
+        rgba(124, 111, 246, 0) 76%
+      ),
+      radial-gradient(
+        9px 9px at 67% 62%,
+        rgba(52, 211, 153, 0.22),
+        rgba(52, 211, 153, 0) 76%
+      ),
+      radial-gradient(
+        7px 7px at 82% 30%,
+        rgba(197, 238, 255, 0.24),
+        rgba(197, 238, 255, 0) 74%
+      );
+    opacity: 0.58;
+    filter: blur(1px) brightness(1.16);
+  }
+
   @keyframes twinkle {
     0%,
     100% {
       opacity: 0.48;
     }
     50% {
-      opacity: 0.62;
+      opacity: 0.74;
     }
   }
 `;
