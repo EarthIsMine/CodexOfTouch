@@ -7,6 +7,21 @@ export class WorldIDService {
   private readonly verifyUrl = 'https://developer.worldcoin.org/api/v1/verify';
 
   async verifyProof(proof: WorldIDProof): Promise<boolean> {
+    // 개발 환경: 테스트용 nullifier_hash 허용
+    if (config.nodeEnv === 'development') {
+      const testNullifierHashes = [
+        'test_user_1',
+        'test_user_2',
+        'test_user_3',
+        '0x5678...',
+      ];
+
+      if (testNullifierHashes.includes(proof.nullifier_hash)) {
+        logger.info(`Development mode: bypassing World ID verification for ${proof.nullifier_hash}`);
+        return true;
+      }
+    }
+
     try {
       const response = await axios.post<WorldIDVerifyResponse>(
         `${this.verifyUrl}/${config.worldcoinAppId}`,
