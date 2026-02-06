@@ -8,6 +8,10 @@ type ActiveCharacterApiResponse = {
       id?: number;
       name?: string;
       assetFolder?: string;
+      files?: Array<{
+        name?: string;
+        url?: string;
+      }>;
     };
     jackpot?: {
       currentPool?: number;
@@ -56,6 +60,14 @@ export async function GET() {
 
     const currentPool = Number(payload.data.jackpot.currentPool ?? 0);
     const timeRemaining = Number(payload.data.jackpot.timeRemaining ?? 0);
+    const assetFolder = payload.data.character?.assetFolder ?? "";
+    const fileNames = (payload.data.character?.files ?? [])
+      .map((file) => file.name ?? "")
+      .filter(Boolean);
+    const htmlName = fileNames.find((name) => name.endsWith(".html")) || "index.html";
+    const jsName = fileNames.find((name) => name.endsWith(".js")) || "main.js";
+    const glbName =
+      fileNames.find((name) => name.endsWith(".glb")) || `${assetFolder}.glb`;
 
     return NextResponse.json({
       ok: true,
@@ -63,7 +75,10 @@ export async function GET() {
       data: {
         characterId: Number(payload.data.character?.id ?? 0),
         characterName: payload.data.character?.name ?? "",
-        characterImageUrl: payload.data.character?.assetFolder ?? "",
+        characterAssetFolder: assetFolder,
+        characterHtmlUrl: `${backendApiUrl}/public/${assetFolder}/${htmlName}`,
+        characterJsUrl: `${backendApiUrl}/public/${assetFolder}/${jsName}`,
+        characterGlbUrl: `${backendApiUrl}/public/${assetFolder}/${glbName}`,
         jackpotPool: currentPool,
         jackpot: timeRemaining,
         poolAmount: currentPool,

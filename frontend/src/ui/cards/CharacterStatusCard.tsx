@@ -1,11 +1,15 @@
 "use client";
 
 import styled from "@emotion/styled";
+import { useMemo } from "react";
 
 export type CharacterStatusCardProps = {
   title: string;
   characterName: string;
-  characterImageUrl?: string;
+  characterAssetFolder?: string;
+  characterHtmlUrl?: string;
+  characterJsUrl?: string;
+  characterGlbUrl?: string;
   topActionLabel: string;
   topActionDisabled?: boolean;
   onTopActionClick?: () => void;
@@ -21,7 +25,10 @@ export type CharacterStatusCardProps = {
 export default function CharacterStatusCard({
   title,
   characterName,
-  characterImageUrl,
+  characterAssetFolder,
+  characterHtmlUrl,
+  characterJsUrl,
+  characterGlbUrl,
   topActionLabel,
   topActionDisabled = false,
   onTopActionClick,
@@ -33,6 +40,24 @@ export default function CharacterStatusCard({
   secondaryStatValue,
   hint,
 }: CharacterStatusCardProps) {
+  const viewerUrl = useMemo(() => {
+    if (!characterHtmlUrl) {
+      return "";
+    }
+    const params = new URLSearchParams();
+    if (characterJsUrl) {
+      params.set("main", characterJsUrl);
+    }
+    if (characterGlbUrl) {
+      params.set("model", characterGlbUrl);
+    }
+    if (characterAssetFolder) {
+      params.set("assetFolder", characterAssetFolder);
+    }
+    const query = params.toString();
+    return query ? `${characterHtmlUrl}?${query}` : characterHtmlUrl;
+  }, [characterAssetFolder, characterGlbUrl, characterHtmlUrl, characterJsUrl]);
+
   return (
     <HeroCard>
       <HeroTop>
@@ -52,9 +77,11 @@ export default function CharacterStatusCard({
       <StageArea>
         <Cylinder aria-hidden>
           <CharacterCore>
-            {characterImageUrl ? (
-              <CharacterAvatar
-                style={{ backgroundImage: `url(${characterImageUrl})` }}
+            {viewerUrl ? (
+              <CharacterFrame
+                src={viewerUrl}
+                title={`${characterName} 3D Viewer`}
+                loading="lazy"
               />
             ) : (
               <GlowBlob />
@@ -225,13 +252,13 @@ const GlowBlob = styled.div`
     inset 0 -20px 30px rgba(232, 133, 72, 0.42);
 `;
 
-const CharacterAvatar = styled.div`
+const CharacterFrame = styled.iframe`
   width: clamp(68px, 10.5vh, 104px);
   height: clamp(68px, 10.5vh, 104px);
   border-radius: 999px;
-  background-position: center;
-  background-repeat: no-repeat;
-  background-size: cover;
+  border: 0;
+  overflow: hidden;
+  pointer-events: none;
 `;
 
 const BottomStats = styled.div`
