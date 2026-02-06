@@ -1,8 +1,7 @@
 {
-  "home": {
-    "title": "Codex Of Touch",
-    "subtitle": "Where human touch becomes a permanent record.",
-    "pet": "Pet",
-    "language": "Language"
+  "common": {
+    "i18nTest": "i18n & Color Test Page",
+    "confirm": "Confirm",
+    "cancel": "Cancel"
   }
 }

@@ -1,8 +1,7 @@
 {
-  "home": {
-    "title": "코덱스 오브 터치",
-    "subtitle": "인간의 접촉이 영구적인 기록이 되는 곳",
-    "pet": "쓰다듬기",
-    "language": "언어"
+  "common": {
+    "i18nTest": "다국어 및 컬러 테스트 페이지",
+    "confirm": "확인",
+    "cancel": "취소"
   }
 }

@@ -6,6 +6,10 @@ export default function GlobalStyles() {
   return (
     <Global
       styles={css`
+        /* =========================
+           1. CSS Reset (Minimal)
+        ========================== */
+
         *,
         *::before,
         *::after {
@@ -20,15 +24,56 @@ export default function GlobalStyles() {
           height: 100%;
         }
 
+        body {
+          -webkit-font-smoothing: antialiased;
+          -moz-osx-font-smoothing: grayscale;
+          text-rendering: optimizeLegibility;
+
+          /* 🌑 Dark Theme Default */
+          background-color: var(--color-neutral-1000);
+          color: var(--color-neutral-100);
+
+          font-family: var(--font-body);
+        }
+
+        button {
+          border: none;
+          background: none;
+          padding: 0;
+          cursor: pointer;
+          font: inherit;
+        }
+
+        a {
+          color: inherit;
+          text-decoration: none;
+        }
+
+        img,
+        video {
+          max-width: 100%;
+          display: block;
+        }
+
+        /* =========================
+           2. Font Families
+        ========================== */
+
         :root {
-          /* next/font/local variable mapping */
           --font-heading:
-            var(--font-school-safety), var(--font-pretendard), system-ui,
-            -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-          --font-body:
-            var(--font-pretendard), system-ui, -apple-system,
+            "학교안심 둥근미소", Pretendard, system-ui, -apple-system,
             BlinkMacSystemFont, "Segoe UI", sans-serif;
 
+          --font-body:
+            Pretendard, system-ui, -apple-system, BlinkMacSystemFont,
+            "Segoe UI", sans-serif;
+        }
+
+        /* =========================
+           3. Typography Scale
+        ========================== */
+
+        :root {
           /* Base */
           --font-size-base: 14px;
 
@@ -50,8 +95,57 @@ export default function GlobalStyles() {
           --letter-spacing-heading: 0.005em;
           --letter-spacing-subtitle: -0.005em;
           --letter-spacing-body: -0.015em;
+        }
 
-          /* Spacing (4px scale) */
+        h1,
+        h2 {
+          font-family: var(--font-heading);
+          line-height: var(--line-height-heading);
+          letter-spacing: var(--letter-spacing-heading);
+          margin: 0;
+          color: var(--color-neutral-100);
+        }
+
+        h1 {
+          font-size: var(--font-size-h1);
+        }
+
+        h2 {
+          font-size: var(--font-size-h2);
+        }
+
+        p,
+        span,
+        li,
+        input,
+        textarea {
+          font-family: var(--font-body);
+          font-size: var(--font-size-body);
+          line-height: var(--line-height-body);
+          letter-spacing: var(--letter-spacing-body);
+          margin: 0;
+          color: var(--color-neutral-200);
+        }
+
+        .subtitle {
+          font-size: var(--font-size-subtitle);
+          line-height: var(--line-height-subtitle);
+          letter-spacing: var(--letter-spacing-subtitle);
+          color: var(--color-neutral-300);
+        }
+
+        .caption {
+          font-size: var(--font-size-caption);
+          line-height: var(--line-height-body);
+          letter-spacing: var(--letter-spacing-body);
+          color: var(--color-neutral-400);
+        }
+
+        /* =========================
+           4. Spacing Scale (4px)
+        ========================== */
+
+        :root {
           --space-0: 0px;
           --space-1: 4px;
           --space-2: 8px;
@@ -63,15 +157,21 @@ export default function GlobalStyles() {
           --space-8: 40px;
           --space-9: 48px;
           --space-10: 64px;
+        }
 
+        /* =========================
+           5. Color Palette
+        ========================== */
+
+        :root {
           /* Neutral */
           --color-neutral-100: #ffffff;
-          --color-neutral-200: #f9fafb;
-          --color-neutral-300: #f1f3f5;
-          --color-neutral-400: #e5e7eb;
-          --color-neutral-500: #d1d5db;
-          --color-neutral-600: #9ca3af;
-          --color-neutral-700: #6b7280;
+          --color-neutral-200: #f3f4f6;
+          --color-neutral-300: #e5e7eb;
+          --color-neutral-400: #d1d5db;
+          --color-neutral-500: #9ca3af;
+          --color-neutral-600: #6b7280;
+          --color-neutral-700: #4b5563;
           --color-neutral-800: #374151;
           --color-neutral-900: #1f2937;
           --color-neutral-1000: #111827;
@@ -79,7 +179,7 @@ export default function GlobalStyles() {
           --color-neutral-1200: #05080f;
           --color-neutral-1300: #000000;
 
-          /* Brand */
+          /* Brand (Soft Violet) */
           --color-brand-100: #f3f1ff;
           --color-brand-200: #e4e0ff;
           --color-brand-300: #cfc8ff;
@@ -91,7 +191,7 @@ export default function GlobalStyles() {
           --color-brand-900: #2c2670;
           --color-brand-1000: #1a1747;
 
-          /* Secondary */
+          /* Secondary (Mint) */
           --color-secondary-100: #ecfef6;
           --color-secondary-200: #d1fae5;
           --color-secondary-300: #a7f3d0;
@@ -108,76 +208,14 @@ export default function GlobalStyles() {
           --color-warning: #fbbf24;
           --color-error: #f87171;
           --color-info: #60a5fa;
+
+          /* ✨ Fluorescent Accent (CTA Only) */
+          --color-accent-neon: #b7ff3c;
         }
 
-        body {
-          -webkit-font-smoothing: antialiased;
-          -moz-osx-font-smoothing: grayscale;
-          text-rendering: optimizeLegibility;
-
-          background-color: var(--color-neutral-100);
-          color: var(--color-neutral-900);
-
-          font-family: var(--font-body);
-          font-size: var(--font-size-body);
-          line-height: var(--line-height-body);
-          letter-spacing: var(--letter-spacing-body);
-        }
-
-        h1,
-        h2 {
-          font-family: var(--font-heading);
-          line-height: var(--line-height-heading);
-          letter-spacing: var(--letter-spacing-heading);
-          margin: 0;
-        }
-
-        h1 {
-          font-size: var(--font-size-h1);
-        }
-
-        h2 {
-          font-size: var(--font-size-h2);
-        }
-
-        .subtitle {
-          font-family: var(--font-body);
-          font-size: var(--font-size-subtitle);
-          line-height: var(--line-height-subtitle);
-          letter-spacing: var(--letter-spacing-subtitle);
-        }
-
-        .caption {
-          font-family: var(--font-body);
-          font-size: var(--font-size-caption);
-          line-height: var(--line-height-body);
-          letter-spacing: var(--letter-spacing-body);
-        }
-
-        button {
-          border: none;
-          background: none;
-          padding: 0;
-          cursor: pointer;
-          font: inherit;
-          color: inherit;
-        }
-
-        a {
-          color: inherit;
-          text-decoration: none;
-        }
-
-        img,
-        video {
-          max-width: 100%;
-          display: block;
-        }
-
-        :focus-visible {
-          outline: 2px solid var(--color-brand-500);
-          outline-offset: 2px;
-        }
+        /* =========================
+           6. Layout Base (Mobile First)
+        ========================== */
 
         #root {
           min-height: 100%;
@@ -187,6 +225,15 @@ export default function GlobalStyles() {
           max-width: 480px;
           margin: 0 auto;
           padding: var(--space-4);
+        }
+
+        /* =========================
+           7. Accessibility
+        ========================== */
+
+        :focus-visible {
+          outline: 2px solid var(--color-accent-neon);
+          outline-offset: 2px;
         }
       `}
     />
