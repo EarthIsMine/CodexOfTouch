@@ -53,7 +53,36 @@
       "market": "마켓"
     },
     "market": {
-      "comingSoon": "준비 중"
+      "comingSoon": "준비 중",
+      "title": "WLD 스킬 마켓",
+      "subtitle": "확률은 그대로, 플레이 편의만 강화합니다.",
+      "balanceLabel": "보유 잔액",
+      "balanceUnit": "WLD",
+      "buy": "WLD로 구매",
+      "owned": "보유 중",
+      "insufficient": "WLD 부족",
+      "purchased": "{skill} 구매 완료",
+      "principleTitle": "스킬 원칙",
+      "principleBody": "스킬은 플레이 편의성만 개선하며 성공 확률은 변경하지 않습니다.",
+      "onchainTitle": "온체인 검증",
+      "onchainBody": "스킬 권한은 온체인에서 검증 가능한 구조를 따릅니다.",
+      "skills": {
+        "cooldown": {
+          "title": "쿨다운 감소",
+          "body": "터치 실패 후 적용되는 쿨다운 시간을 줄입니다.",
+          "meta": "기본 성공 확률에는 영향이 없습니다."
+        },
+        "dailyBoost": {
+          "title": "출석 보상 2배",
+          "body": "하루 1회 출석 보상을 2배로 받습니다.",
+          "meta": "다음 일일 갱신 시 다시 사용 가능합니다."
+        },
+        "inputBlock": {
+          "title": "입력 차단",
+          "body": "짧은 시간 동안 경쟁 입력을 차단합니다.",
+          "meta": "타이밍 편의 기능으로만 동작합니다."
+        }
+      }
     },
     "nav": {
       "codex": "📖 도감",

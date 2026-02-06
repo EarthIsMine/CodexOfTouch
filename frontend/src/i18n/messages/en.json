@@ -53,7 +53,36 @@
       "market": "Market"
     },
     "market": {
-      "comingSoon": "Coming Soon"
+      "comingSoon": "Coming Soon",
+      "title": "WLD Skill Market",
+      "subtitle": "Utility-only skills. Probability is unchanged.",
+      "balanceLabel": "Your Balance",
+      "balanceUnit": "WLD",
+      "buy": "Buy with WLD",
+      "owned": "Owned",
+      "insufficient": "Insufficient WLD",
+      "purchased": "{skill} purchased successfully.",
+      "principleTitle": "Skill Principle",
+      "principleBody": "Skills improve play convenience only. They do not alter success probability.",
+      "onchainTitle": "On-chain Verifiability",
+      "onchainBody": "Skill permissions are designed to be verifiable on-chain.",
+      "skills": {
+        "cooldown": {
+          "title": "Cooldown Reducer",
+          "body": "Reduces petting cooldown after failed attempts.",
+          "meta": "No effect on base success odds."
+        },
+        "dailyBoost": {
+          "title": "Daily Reward x2",
+          "body": "Doubles your daily check-in reward once per day.",
+          "meta": "Resets at the next daily checkpoint."
+        },
+        "inputBlock": {
+          "title": "Input Block",
+          "body": "Temporarily blocks competing inputs for a short duration.",
+          "meta": "Designed for timing convenience only."
+        }
+      }
     },
     "nav": {
       "codex": "📖 Codex",
