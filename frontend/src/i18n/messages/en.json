@@ -15,10 +15,15 @@
     "cta": {
       "cooldown": "Cooldown ({seconds}s)",
       "pet": "Pet",
+      "petting": "Petting...",
       "petCost": "({amount} Stardust per touch)",
       "verify": "Verify with World ID",
       "dailyCheckIn": "Check-in",
       "checkingIn": "Checking in...",
+      "petSuccess": "Pet succeeded.",
+      "petFail": "Pet failed.",
+      "petFailed": "Pet request failed.",
+      "petFailedNoBalance": "Pet failed: not enough Stardust.",
       "note": "No pay-to-win.",
       "exploreCodex": "Open Codex",
       "dailyCheckInDone": "Check-in Complete"

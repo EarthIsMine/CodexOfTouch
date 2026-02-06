@@ -2,7 +2,7 @@
 
 import styled from "@emotion/styled";
 import { useTranslations } from "next-intl";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import CharacterStatusCard from "@/ui/cards/CharacterStatusCard";
 import InfoStatCard from "@/ui/cards/InfoStatCard";
 import ToastMessage from "@/ui/primitives/ToastMessage";
@@ -29,6 +29,58 @@ export default function HomePage() {
   const todayKey = getTodayKey();
 
   const canDailyCheckIn = lastCheckInDate !== todayKey;
+
+  const loadHomeStats = useCallback(async () => {
+    try {
+      const response = await fetch("/api/dev/home-stats", {
+        method: "GET",
+        cache: "no-store",
+      });
+      const payload = (await response.json()) as {
+        ok: boolean;
+        data?: {
+          jackpotPool: number;
+          jackpot: number;
+          poolAmount: number;
+        };
+      };
+
+      if (!response.ok || !payload.ok || !payload.data) {
+        return;
+      }
+
+      setJackpotPool(payload.data.jackpotPool);
+      setJackpotRemainingSec(payload.data.jackpot);
+      setPoolAmount(payload.data.poolAmount);
+    } catch {
+      // Keep current values when backend route is unavailable.
+    }
+  }, []);
+
+  const loadUserSummary = useCallback(async () => {
+    try {
+      const response = await fetch("/api/dev/user-summary", {
+        method: "GET",
+        cache: "no-store",
+      });
+      const payload = (await response.json()) as {
+        ok: boolean;
+        data?: {
+          internalBalance: number;
+          lastCheckIn: string | null;
+        };
+      };
+
+      if (!response.ok || !payload.ok || !payload.data) {
+        return;
+      }
+
+      setSoftCurrency(payload.data.internalBalance);
+      setLastCheckInDate(toDateKey(payload.data.lastCheckIn));
+    } catch {
+      // Keep current values when backend route is unavailable.
+    }
+  }, []);
 
   const handleDailyCheckIn = async () => {
     if (isCheckingIn) {
@@ -93,61 +145,34 @@ export default function HomePage() {
 
     const loadHomeData = async () => {
       try {
-        const [homeStatsResponse, userSummaryResponse] = await Promise.all([
-          fetch("/api/dev/home-stats", {
-            method: "GET",
-            cache: "no-store",
-          }),
-          fetch("/api/dev/user-summary", {
-            method: "GET",
-            cache: "no-store",
-          }),
-        ]);
-        const homeStatsPayload = (await homeStatsResponse.json()) as {
-          ok: boolean;
-          data?: {
-            jackpotPool: number;
-            jackpot: number;
-            poolAmount: number;
-          };
-        };
-        const userSummaryPayload = (await userSummaryResponse.json()) as {
-          ok: boolean;
-          data?: {
-            internalBalance: number;
-            lastCheckIn: string | null;
-          };
-        };
-
         if (!mounted) {
           return;
         }
-
-        if (homeStatsResponse.ok && homeStatsPayload.ok && homeStatsPayload.data) {
-          setJackpotPool(homeStatsPayload.data.jackpotPool);
-          setJackpotRemainingSec(homeStatsPayload.data.jackpot);
-          setPoolAmount(homeStatsPayload.data.poolAmount);
-        }
-
-        if (
-          userSummaryResponse.ok &&
-          userSummaryPayload.ok &&
-          userSummaryPayload.data
-        ) {
-          setSoftCurrency(userSummaryPayload.data.internalBalance);
-          setLastCheckInDate(toDateKey(userSummaryPayload.data.lastCheckIn));
-        }
+        await loadUserSummary();
       } catch {
         // Fallback values remain when backend test route is unavailable.
       }
     };
 
+    void loadHomeStats();
     void loadHomeData();
 
     return () => {
       mounted = false;
     };
-  }, []);
+  }, [loadHomeStats, loadUserSummary]);
+
+  useEffect(() => {
+    const onRefresh = () => {
+      void loadHomeStats();
+      void loadUserSummary();
+    };
+
+    window.addEventListener("codex:refresh-home-stats", onRefresh);
+    return () => {
+      window.removeEventListener("codex:refresh-home-stats", onRefresh);
+    };
+  }, [loadHomeStats, loadUserSummary]);
 
   const formattedJackpotPool = jackpotPool.toLocaleString();
   const formattedPool = poolAmount.toLocaleString();

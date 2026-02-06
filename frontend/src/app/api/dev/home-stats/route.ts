@@ -3,6 +3,9 @@ import { NextResponse } from "next/server";
 type ActiveCharacterApiResponse = {
   success: boolean;
   data?: {
+    character?: {
+      id?: number;
+    };
     jackpot?: {
       currentPool?: number;
       timeRemaining?: number;
@@ -55,6 +58,7 @@ export async function GET() {
       ok: true,
       status: response.status,
       data: {
+        characterId: Number(payload.data.character?.id ?? 0),
         jackpotPool: currentPool,
         jackpot: timeRemaining,
         poolAmount: currentPool,

@@ -13,6 +13,8 @@ type BottomCTASectionProps = {
   isVerified: boolean;
   cooldownSec: number;
   isPetDisabled: boolean;
+  onPetAction?: () => void;
+  petPending?: boolean;
 };
 
 export function HeaderSection({ isVerified }: HeaderSectionProps) {
@@ -30,15 +32,23 @@ export function BottomCTASection({
   isVerified,
   cooldownSec,
   isPetDisabled,
+  onPetAction,
+  petPending = false,
 }: BottomCTASectionProps) {
   const t = useTranslations("home");
 
   return (
     <BottomCTA>
       <PrimaryAction>
-        <CTAButton variant="brand" disabled={isPetDisabled}>
+        <CTAButton
+          variant="brand"
+          disabled={isPetDisabled || petPending}
+          onClick={onPetAction}
+        >
           {isVerified
-            ? cooldownSec > 0
+            ? petPending
+              ? t("cta.petting")
+              : cooldownSec > 0
               ? t("cta.cooldown", { seconds: cooldownSec })
               : t("cta.pet")
             : t("cta.verify")}

@@ -15,10 +15,15 @@
     "cta": {
       "cooldown": "대기 중 ({seconds}초)",
       "pet": "터치하기",
+      "petting": "터치 중...",
       "petCost": "(터치 1회당 {amount} 스타더스트)",
       "verify": "World ID로 인증하기",
       "dailyCheckIn": "출석 체크",
       "checkingIn": "출석 처리 중...",
+      "petSuccess": "터치 성공",
+      "petFail": "터치 실패",
+      "petFailed": "터치 요청에 실패했습니다.",
+      "petFailedNoBalance": "터치 실패: 스타더스트가 부족합니다.",
       "note": "과금으로 승부가 갈리지 않습니다.",
       "exploreCodex": "도감 보기",
       "dailyCheckInDone": "출석 완료"
