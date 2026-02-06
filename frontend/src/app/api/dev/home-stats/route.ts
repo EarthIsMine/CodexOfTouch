@@ -35,6 +35,7 @@ export async function GET() {
   }
 
   try {
+    const backendOrigin = backendApiUrl.replace(/\/api\/?$/, "");
     const headers: Record<string, string> = {};
     if (backendAuthToken) {
       headers.Authorization = `Bearer ${backendAuthToken}`;
@@ -76,9 +77,9 @@ export async function GET() {
         characterId: Number(payload.data.character?.id ?? 0),
         characterName: payload.data.character?.name ?? "",
         characterAssetFolder: assetFolder,
-        characterHtmlUrl: `${backendApiUrl}/public/${assetFolder}/${htmlName}`,
-        characterJsUrl: `${backendApiUrl}/public/${assetFolder}/${jsName}`,
-        characterGlbUrl: `${backendApiUrl}/public/${assetFolder}/${glbName}`,
+        characterHtmlUrl: `${backendOrigin}/public/${assetFolder}/${htmlName}`,
+        characterJsUrl: `${backendOrigin}/public/${assetFolder}/${jsName}`,
+        characterGlbUrl: `${backendOrigin}/public/${assetFolder}/${glbName}`,
         jackpotPool: currentPool,
         jackpot: timeRemaining,
         poolAmount: currentPool,
