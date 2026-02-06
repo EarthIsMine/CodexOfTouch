@@ -5,6 +5,8 @@ import jackpotService from '@/services/jackpot.service';
 import petService from '@/services/pet.service';
 import codexService from '@/services/codex.service';
 import { successResponse } from '@/utils/response';
+import path from 'path';
+import { promises as fs } from 'fs';
 
 export class CharacterController {
   async getActiveCharacter(req: AuthRequest, res: Response, next: NextFunction) {
@@ -12,12 +14,28 @@ export class CharacterController {
       const character = await characterService.getActiveCharacter();
       const jackpot = await jackpotService.getCurrentJackpot(character.id);
 
+      // Get asset files
+      let files: Array<{ name: string; url: string }> = [];
+      try {
+        const publicDir = path.join(__dirname, '../../public');
+        const folderPath = path.join(publicDir, character.assetFolder);
+        const fileNames = await fs.readdir(folderPath);
+        files = fileNames.map((fileName) => ({
+          name: fileName,
+          url: `/public/${character.assetFolder}/${fileName}`,
+        }));
+      } catch (err) {
+        // If folder doesn't exist, just return empty files array
+        files = [];
+      }
+
       const responseData: any = {
         character: {
           id: character.id,
           name: character.name,
-          imageUrl: character.imageUrl,
+          assetFolder: character.assetFolder,
           isActive: character.isActive,
+          files,
         },
         jackpot: {
           currentPool: jackpot.currentPool,
@@ -53,11 +71,27 @@ export class CharacterController {
       const charactersWithStats = await Promise.all(
         characters.map(async (char) => {
           const stats = await characterService.getCharacterStats(char.id);
+
+          // Get asset files
+          let files: Array<{ name: string; url: string }> = [];
+          try {
+            const publicDir = path.join(__dirname, '../../public');
+            const folderPath = path.join(publicDir, char.assetFolder);
+            const fileNames = await fs.readdir(folderPath);
+            files = fileNames.map((fileName) => ({
+              name: fileName,
+              url: `/public/${char.assetFolder}/${fileName}`,
+            }));
+          } catch (err) {
+            files = [];
+          }
+
           return {
             id: char.id,
             name: char.name,
-            imageUrl: char.imageUrl,
+            assetFolder: char.assetFolder,
             isActive: char.isActive,
+            files,
             stats,
           };
         })

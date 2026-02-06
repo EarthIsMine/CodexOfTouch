@@ -2,6 +2,7 @@ import express, { Application } from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
 import morgan from 'morgan';
+import path from 'path';
 import routes from './routes';
 import { errorHandler, notFoundHandler } from './middlewares/error-handler';
 import { generalRateLimit } from './middlewares/rate-limit';
@@ -35,6 +36,9 @@ app.use(
 
 // Rate limiting
 app.use('/api', generalRateLimit);
+
+// Serve static files from public directory
+app.use('/public', express.static(path.join(__dirname, '../public')));
 
 // Health check (outside /api)
 app.get('/health', routes);

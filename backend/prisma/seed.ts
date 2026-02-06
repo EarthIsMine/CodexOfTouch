@@ -12,32 +12,32 @@ async function main() {
 
   const characters = [
     {
-      name: 'Fluffy Cat',
-      imageUrl: 'https://example.com/characters/fluffy-cat.png',
+      name: 'Pelican',
+      assetFolder: 'pelicanImg',
       successRate: 0.15,
       isActive: true, // 첫 번째 캐릭터를 활성화
     },
     {
       name: 'Happy Dog',
-      imageUrl: 'https://example.com/characters/happy-dog.png',
+      assetFolder: 'dogImg',
       successRate: 0.12,
       isActive: false,
     },
     {
       name: 'Sleepy Panda',
-      imageUrl: 'https://example.com/characters/sleepy-panda.png',
+      assetFolder: 'pandaImg',
       successRate: 0.1,
       isActive: false,
     },
     {
       name: 'Wise Owl',
-      imageUrl: 'https://example.com/characters/wise-owl.png',
+      assetFolder: 'owlImg',
       successRate: 0.08,
       isActive: false,
     },
     {
       name: 'Bouncy Rabbit',
-      imageUrl: 'https://example.com/characters/bouncy-rabbit.png',
+      assetFolder: 'rabbitImg',
       successRate: 0.2,
       isActive: false,
     },

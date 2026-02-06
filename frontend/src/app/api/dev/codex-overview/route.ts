@@ -7,7 +7,7 @@ type CharactersApiResponse = {
     characters?: Array<{
       id?: number;
       name?: string;
-      imageUrl?: string;
+      assetFolder?: string;
       isActive?: boolean;
       stats?: {
         successRate?: number;
@@ -108,7 +108,7 @@ export async function GET() {
       return {
         id,
         name: character.name ?? "",
-        imageUrl: character.imageUrl ?? "",
+        imageUrl: character.assetFolder ?? "",
         isActive: Boolean(character.isActive),
         owned: Boolean(codexEntry),
         tokenId: codexEntry?.tokenId ?? null,

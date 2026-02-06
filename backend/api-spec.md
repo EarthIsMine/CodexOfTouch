@@ -165,9 +165,23 @@ Authorization: Bearer <JWT_TOKEN>
   "data": {
     "character": {
       "id": 1,
-      "name": "Fluffy Cat",
-      "imageUrl": "https://...",
-      "isActive": true
+      "name": "Pelican",
+      "assetFolder": "pelicanImg",
+      "isActive": true,
+      "files": [
+        {
+          "name": "Pelican.glb",
+          "url": "/public/pelicanImg/Pelican.glb"
+        },
+        {
+          "name": "index.html",
+          "url": "/public/pelicanImg/index.html"
+        },
+        {
+          "name": "main.js",
+          "url": "/public/pelicanImg/main.js"
+        }
+      ]
     },
     "jackpot": {
       "currentPool": 1500,
@@ -182,6 +196,11 @@ Authorization: Bearer <JWT_TOKEN>
   }
 }
 ```
+
+**필드 설명:**
+- `assetFolder`: 캐릭터 에셋이 저장된 폴더 이름
+- `files`: 에셋 파일 목록 (3D 모델, 뷰어 HTML/JS 등)
+- `files[].url`: 정적 파일 접근 경로 (예: `/public/pelicanImg/index.html`)
 
 **에러:**
 - `CHAR_001`: No active character
@@ -205,9 +224,23 @@ Authorization: Bearer <JWT_TOKEN>
     "characters": [
       {
         "id": 1,
-        "name": "Fluffy Cat",
-        "imageUrl": "https://...",
+        "name": "Pelican",
+        "assetFolder": "pelicanImg",
         "isActive": true,
+        "files": [
+          {
+            "name": "Pelican.glb",
+            "url": "/public/pelicanImg/Pelican.glb"
+          },
+          {
+            "name": "index.html",
+            "url": "/public/pelicanImg/index.html"
+          },
+          {
+            "name": "main.js",
+            "url": "/public/pelicanImg/main.js"
+          }
+        ],
         "stats": {
           "totalPets": 1000,
           "totalSuccess": 150,
@@ -221,9 +254,79 @@ Authorization: Bearer <JWT_TOKEN>
 
 ---
 
-## 4. Pet (쓰다듬기)
+## 4. Assets (에셋 파일)
 
-### 4.1 쓰다듬기 시도
+### 4.1 캐릭터 에셋 파일 목록 조회
+
+**Endpoint:** `GET /assets/:assetFolder`
+
+**인증:** Not Required
+
+**설명:** 특정 캐릭터의 에셋 파일 목록을 조회합니다.
+
+**Path Parameters:**
+- `assetFolder`: string - 캐릭터 에셋 폴더 이름 (예: `pelicanImg`)
+
+**응답 (200):**
+```json
+{
+  "success": true,
+  "data": {
+    "folder": "pelicanImg",
+    "files": [
+      {
+        "name": "Pelican.glb",
+        "url": "/public/pelicanImg/Pelican.glb"
+      },
+      {
+        "name": "index.html",
+        "url": "/public/pelicanImg/index.html"
+      },
+      {
+        "name": "main.js",
+        "url": "/public/pelicanImg/main.js"
+      }
+    ]
+  }
+}
+```
+
+**에러:**
+- `ASSET_001`: Invalid asset folder name (경로 탐색 시도 차단)
+- `404`: Asset folder not found
+
+---
+
+### 4.2 정적 파일 직접 접근
+
+**Base URL:** `http://localhost:8090/public/:assetFolder/:filename`
+
+**인증:** Not Required
+
+**설명:**
+- 정적 파일에 직접 접근할 수 있습니다.
+- 3D 뷰어 HTML은 iframe으로 임베드 가능합니다.
+
+**예시:**
+- **3D 뷰어 HTML**: `GET /public/pelicanImg/index.html`
+- **3D 모델 파일**: `GET /public/pelicanImg/Pelican.glb`
+- **JavaScript**: `GET /public/pelicanImg/main.js`
+
+**iframe 사용 예시:**
+```html
+<iframe
+  src="http://localhost:8090/public/pelicanImg/index.html"
+  width="400"
+  height="400"
+  frameborder="0">
+</iframe>
+```
+
+---
+
+## 5. Pet (쓰다듬기)
+
+### 5.1 쓰다듬기 시도
 
 **Endpoint:** `POST /pet`
 
@@ -286,7 +389,7 @@ Authorization: Bearer <JWT_TOKEN>
 
 ---
 
-### 4.2 내 쓰다듬기 기록
+### 5.2 내 쓰다듬기 기록
 
 **Endpoint:** `GET /pet/history`
 
@@ -323,9 +426,9 @@ Authorization: Bearer <JWT_TOKEN>
 
 ---
 
-## 5. Codex (도감)
+## 6. Codex (도감)
 
-### 5.1 내 도감 조회
+### 6.1 내 도감 조회
 
 **Endpoint:** `GET /codex/me`
 
@@ -358,7 +461,7 @@ Authorization: Bearer <JWT_TOKEN>
 
 ---
 
-### 5.2 특정 캐릭터 도감 통계
+### 6.2 특정 캐릭터 도감 통계
 
 **Endpoint:** `GET /codex/character/:characterId`
 
@@ -389,9 +492,9 @@ Authorization: Bearer <JWT_TOKEN>
 
 ---
 
-## 6. Jackpot (잭팟)
+## 7. Jackpot (잭팟)
 
-### 6.1 현재 잭팟 상태
+### 7.1 현재 잭팟 상태
 
 **Endpoint:** `GET /jackpot/current`
 
@@ -416,7 +519,7 @@ Authorization: Bearer <JWT_TOKEN>
 
 ---
 
-### 6.2 잭팟 히스토리
+### 7.2 잭팟 히스토리
 
 **Endpoint:** `GET /jackpot/history`
 
@@ -455,9 +558,9 @@ Authorization: Bearer <JWT_TOKEN>
 
 ---
 
-## 7. Skills (스킬)
+## 8. Skills (스킬)
 
-### 7.1 전체 스킬 목록
+### 8.1 전체 스킬 목록
 
 **Endpoint:** `GET /skills`
 
@@ -486,7 +589,7 @@ Authorization: Bearer <JWT_TOKEN>
 
 ---
 
-### 7.2 내 보유 스킬
+### 8.2 내 보유 스킬
 
 **Endpoint:** `GET /skills/my`
 
@@ -528,7 +631,7 @@ Authorization: Bearer <JWT_TOKEN>
 
 ---
 
-### 7.3 스킬 구매
+### 8.3 스킬 구매
 
 **Endpoint:** `POST /skills/:skillId/purchase`
 
@@ -588,7 +691,7 @@ Authorization: Bearer <JWT_TOKEN>
 
 ---
 
-### 7.4 스킬 사용
+### 8.4 스킬 사용
 
 **Endpoint:** `POST /skills/:skillId/use`
 
@@ -620,9 +723,9 @@ Authorization: Bearer <JWT_TOKEN>
 
 ---
 
-## 8. Stats (통계)
+## 9. Stats (통계)
 
-### 8.1 리더보드
+### 9.1 리더보드
 
 **Endpoint:** `GET /stats/leaderboard`
 
@@ -678,7 +781,7 @@ Authorization: Bearer <JWT_TOKEN>
 
 ---
 
-### 8.2 전체 게임 통계
+### 9.2 전체 게임 통계
 
 **Endpoint:** `GET /stats/game`
 
@@ -706,9 +809,9 @@ Authorization: Bearer <JWT_TOKEN>
 
 ---
 
-## 9. Admin (관리자) - MVP에서는 제외
+## 10. Admin (관리자) - MVP에서는 제외
 
-### 9.1 캐릭터 로테이션
+### 10.1 캐릭터 로테이션
 
 **Endpoint:** `POST /admin/characters/rotate`
 
@@ -733,9 +836,9 @@ Authorization: Bearer <JWT_TOKEN>
 
 ---
 
-## 10. Health Check
+## 11. Health Check
 
-### 10.1 서버 상태 확인
+### 11.1 서버 상태 확인
 
 **Endpoint:** `GET /health`
 
@@ -810,6 +913,7 @@ MVP에서는 Polling 방식을 사용하지만, 추후 WebSocket으로 전환 �
 | PET_003 | No active character |
 | PET_004 | Character locked |
 | CHAR_001 | No active character |
+| ASSET_001 | Invalid asset folder name |
 | SKILL_001 | Skill not owned |
 | SKILL_002 | Skill expired |
 | SKILL_003 | Invalid transaction hash |

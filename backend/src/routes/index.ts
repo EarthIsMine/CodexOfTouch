@@ -7,6 +7,7 @@ import codexRoutes from './codex.routes';
 import jackpotRoutes from './jackpot.routes';
 import skillRoutes from './skill.routes';
 import healthRoutes from './health.routes';
+import assetsRoutes from './assets.routes';
 
 const router: Router = Router();
 
@@ -44,5 +45,6 @@ router.use('/pet', petRoutes);
 router.use('/codex', codexRoutes);
 router.use('/jackpot', jackpotRoutes);
 router.use('/skills', skillRoutes);
+router.use('/assets', assetsRoutes);
 
 export default router;

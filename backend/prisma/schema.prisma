@@ -37,7 +37,7 @@ model User {
 model Character {
   id          Int      @id @default(autoincrement())
   name        String
-  imageUrl    String   @map("image_url")
+  assetFolder String   @map("asset_folder") // e.g., "pelicanImg"
   isActive    Boolean  @default(false) @map("is_active")
   successRate Float    @default(0.1) @map("success_rate") // 0.0 ~ 1.0
   createdAt   DateTime @default(now()) @map("created_at")
