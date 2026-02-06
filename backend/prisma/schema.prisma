@@ -1,0 +1,214 @@
+// Petting Roulette Game - Prisma Schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ============================================
+// USER
+// ============================================
+model User {
+  id              String    @id @default(uuid())
+  nullifierHash   String    @unique @map("nullifier_hash")
+  walletAddress   String?   @unique @map("wallet_address")
+  internalBalance Int       @default(0) @map("internal_balance")
+  lastCheckIn     DateTime? @map("last_check_in")
+  createdAt       DateTime  @default(now()) @map("created_at")
+
+  // Relations
+  petEvents       PetEvent[]
+  userSkills      UserSkill[]
+  skillUsages     SkillUsage[]
+  skillPurchases  SkillPurchase[]
+  codex           Codex[]
+  jackpotStates   JackpotState[]
+
+  @@map("users")
+}
+
+// ============================================
+// CHARACTER
+// ============================================
+model Character {
+  id          Int      @id @default(autoincrement())
+  name        String
+  imageUrl    String   @map("image_url")
+  isActive    Boolean  @default(false) @map("is_active")
+  successRate Float    @default(0.1) @map("success_rate") // 0.0 ~ 1.0
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  // Relations
+  petEvents       PetEvent[]
+  codex           Codex[]
+  jackpotState    JackpotState?
+  jackpotHistory  JackpotHistory[]
+
+  @@map("characters")
+}
+
+// ============================================
+// PET_EVENT
+// ============================================
+enum PetResult {
+  SUCCESS
+  FAIL
+}
+
+model PetEvent {
+  id          Int       @id @default(autoincrement())
+  userId      String    @map("user_id")
+  characterId Int       @map("character_id")
+  result      PetResult
+  balanceUsed Int       @default(1) @map("balance_used")
+  createdAt   DateTime  @default(now()) @map("created_at")
+
+  // Relations
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  character Character @relation(fields: [characterId], references: [id], onDelete: Cascade)
+
+  @@index([userId, createdAt(sort: Desc)])
+  @@index([characterId, result])
+  @@map("pet_events")
+}
+
+// ============================================
+// JACKPOT_STATE
+// ============================================
+model JackpotState {
+  characterId Int       @id @map("character_id")
+  currentPool Int       @default(0) @map("current_pool")
+  lastUserId  String?   @map("last_user_id")
+  lastPetAt   DateTime? @map("last_pet_at")
+
+  // Relations
+  character Character @relation(fields: [characterId], references: [id], onDelete: Cascade)
+  lastUser  User?     @relation(fields: [lastUserId], references: [id], onDelete: SetNull)
+
+  @@map("jackpot_states")
+}
+
+// ============================================
+// CODEX (NFT Collection Record)
+// ============================================
+model Codex {
+  id              String   @id @default(uuid())
+  userId          String   @map("user_id")
+  characterId     Int      @map("character_id")
+  contractAddress String   @map("contract_address")
+  tokenId         String   @map("token_id")
+  chainId         Int      @map("chain_id")
+  transactionHash String?  @map("transaction_hash")
+  mintedAt        DateTime @default(now()) @map("minted_at")
+
+  // Relations
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  character Character @relation(fields: [characterId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, characterId])
+  @@index([userId])
+  @@map("codex")
+}
+
+// ============================================
+// JACKPOT_HISTORY
+// ============================================
+model JackpotHistory {
+  roundId         Int      @id @default(autoincrement()) @map("round_id")
+  characterId     Int      @map("character_id")
+  winnerWallet    String   @map("winner_wallet")
+  amount          Int
+  contractAddress String?  @map("contract_address")
+  txHash          String?  @map("tx_hash")
+  chainId         Int?     @map("chain_id")
+  committedAt     DateTime @default(now()) @map("committed_at")
+
+  // Relations
+  character Character @relation(fields: [characterId], references: [id], onDelete: Cascade)
+
+  @@index([characterId, committedAt(sort: Desc)])
+  @@map("jackpot_history")
+}
+
+// ============================================
+// SKILL
+// ============================================
+enum EffectType {
+  COOLDOWN_REDUCE
+  CHECKIN_BONUS
+  USER_BLOCK
+}
+
+model Skill {
+  id          Int        @id @default(autoincrement())
+  name        String
+  description String
+  effectType  EffectType @map("effect_type")
+  value       Int // 효과값 (예: 쿨타임 10초 감소 -> value = 10)
+  durationSec Int        @map("duration_sec") // 지속시간 (초)
+  priceWld    Int        @map("price_wld") // WLD 가격
+  isActive    Boolean    @default(true) @map("is_active")
+
+  // Relations
+  userSkills     UserSkill[]
+  skillUsages    SkillUsage[]
+  skillPurchases SkillPurchase[]
+
+  @@map("skills")
+}
+
+// ============================================
+// USER_SKILL
+// ============================================
+model UserSkill {
+  userId     String    @map("user_id")
+  skillId    Int       @map("skill_id")
+  acquiredAt DateTime  @default(now()) @map("acquired_at")
+  expiresAt  DateTime? @map("expires_at")
+
+  // Relations
+  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  skill Skill @relation(fields: [skillId], references: [id], onDelete: Cascade)
+
+  @@id([userId, skillId])
+  @@map("user_skills")
+}
+
+// ============================================
+// SKILL_USAGE
+// ============================================
+model SkillUsage {
+  id      Int      @id @default(autoincrement())
+  userId  String   @map("user_id")
+  skillId Int      @map("skill_id")
+  usedAt  DateTime @default(now()) @map("used_at")
+
+  // Relations
+  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  skill Skill @relation(fields: [skillId], references: [id], onDelete: Cascade)
+
+  @@index([userId, usedAt(sort: Desc)])
+  @@map("skill_usages")
+}
+
+// ============================================
+// SKILL_PURCHASE
+// ============================================
+model SkillPurchase {
+  id          Int      @id @default(autoincrement())
+  userId      String   @map("user_id")
+  skillId     Int      @map("skill_id")
+  paidWld     Int      @map("paid_wld")
+  txHash      String   @map("tx_hash")
+  purchasedAt DateTime @default(now()) @map("purchased_at")
+
+  // Relations
+  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  skill Skill @relation(fields: [skillId], references: [id], onDelete: Cascade)
+
+  @@map("skill_purchases")
+}
