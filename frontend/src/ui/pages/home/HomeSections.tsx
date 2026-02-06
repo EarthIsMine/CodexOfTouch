@@ -4,6 +4,7 @@ import styled from "@emotion/styled";
 import { useTranslations } from "next-intl";
 import CTAButton from "@/ui/primitives/CTAButton";
 import AppHeader from "@/ui/layout/AppHeader";
+import WorldIdVerifyButton from "@/ui/primitives/WorldIdVerifyButton";
 
 type HeaderSectionProps = {
   isVerified: boolean;
@@ -15,6 +16,8 @@ type BottomCTASectionProps = {
   isPetDisabled: boolean;
   onPetAction?: () => void;
   petPending?: boolean;
+  onVerificationSuccess?: () => void;
+  onVerificationError?: (message: string) => void;
 };
 
 export function HeaderSection({ isVerified }: HeaderSectionProps) {
@@ -34,25 +37,36 @@ export function BottomCTASection({
   isPetDisabled,
   onPetAction,
   petPending = false,
+  onVerificationSuccess,
+  onVerificationError,
 }: BottomCTASectionProps) {
   const t = useTranslations("home");
 
   return (
     <BottomCTA>
       <PrimaryAction>
-        <CTAButton
-          variant="brand"
-          disabled={isPetDisabled || petPending}
-          onClick={onPetAction}
-        >
-          {isVerified
-            ? petPending
+        {isVerified ? (
+          <CTAButton
+            variant="brand"
+            disabled={isPetDisabled || petPending}
+            onClick={onPetAction}
+          >
+            {petPending
               ? t("cta.petting")
               : cooldownSec > 0
-              ? t("cta.cooldown", { seconds: cooldownSec })
-              : t("cta.pet")
-            : t("cta.verify")}
-        </CTAButton>
+                ? t("cta.cooldown", { seconds: cooldownSec })
+                : t("cta.pet")}
+          </CTAButton>
+        ) : (
+          <WorldIdVerifyButton
+            label={t("cta.verify")}
+            verifyingLabel={t("cta.verify")}
+            disabled={petPending}
+            onVerified={() => onVerificationSuccess?.()}
+            onError={(message) => onVerificationError?.(message)}
+            missingConfigMessage={t("cta.verifyMissingConfig")}
+          />
+        )}
         <ActionCaption>{t("cta.petCost", { amount: 1 })}</ActionCaption>
       </PrimaryAction>
     </BottomCTA>

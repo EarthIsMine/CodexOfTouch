@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { resolveBackendAuthToken } from "@/app/api/dev/_lib/auth";
 
 type ActiveCharacterApiResponse = {
   success: boolean;
@@ -20,7 +21,7 @@ type ActiveCharacterApiResponse = {
 
 export async function GET() {
   const backendApiUrl = process.env.BACKEND_API_URL;
-  const backendTestJwt = process.env.BACKEND_TEST_JWT;
+  const backendAuthToken = await resolveBackendAuthToken();
 
   if (!backendApiUrl) {
     return NextResponse.json(
@@ -31,8 +32,8 @@ export async function GET() {
 
   try {
     const headers: Record<string, string> = {};
-    if (backendTestJwt) {
-      headers.Authorization = `Bearer ${backendTestJwt}`;
+    if (backendAuthToken) {
+      headers.Authorization = `Bearer ${backendAuthToken}`;
     }
 
     const response = await fetch(`${backendApiUrl}/api/characters/active`, {

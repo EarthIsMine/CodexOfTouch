@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { resolveBackendAuthToken } from "@/app/api/dev/_lib/auth";
 
 type SkillItem = {
   id: number;
@@ -40,7 +41,7 @@ type MySkillsApiResponse = {
 
 export async function GET() {
   const backendApiUrl = process.env.BACKEND_API_URL;
-  const backendTestJwt = process.env.BACKEND_TEST_JWT;
+  const backendAuthToken = await resolveBackendAuthToken();
 
   if (!backendApiUrl) {
     return NextResponse.json(
@@ -55,11 +56,11 @@ export async function GET() {
         method: "GET",
         cache: "no-store",
       }),
-      backendTestJwt
+      backendAuthToken
         ? fetch(`${backendApiUrl}/api/skills/my`, {
             method: "GET",
             headers: {
-              Authorization: `Bearer ${backendTestJwt}`,
+              Authorization: `Bearer ${backendAuthToken}`,
             },
             cache: "no-store",
           })
@@ -109,4 +110,3 @@ export async function GET() {
     return NextResponse.json({ ok: false, error: message }, { status: 502 });
   }
 }
-

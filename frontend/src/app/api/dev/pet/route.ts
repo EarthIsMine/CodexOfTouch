@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { resolveBackendAuthToken } from "@/app/api/dev/_lib/auth";
 
 type PetApiResponse = {
   success: boolean;
@@ -25,14 +26,14 @@ type PetApiResponse = {
 
 export async function POST(request: Request) {
   const backendApiUrl = process.env.BACKEND_API_URL;
-  const backendTestJwt = process.env.BACKEND_TEST_JWT;
+  const backendAuthToken = await resolveBackendAuthToken();
 
-  if (!backendApiUrl || !backendTestJwt) {
+  if (!backendApiUrl || !backendAuthToken) {
     return NextResponse.json(
       {
         ok: false,
         error:
-          "Missing BACKEND_API_URL or BACKEND_TEST_JWT in frontend environment.",
+          "Missing BACKEND_API_URL and no auth token was found.",
       },
       { status: 500 },
     );
@@ -53,10 +54,10 @@ export async function POST(request: Request) {
 
     const response = await fetch(`${backendApiUrl}/api/pet`, {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${backendTestJwt}`,
-      },
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${backendAuthToken}`,
+        },
       body: JSON.stringify({
         characterId: input.characterId,
         skillId: input.skillId ?? null,
@@ -89,4 +90,3 @@ export async function POST(request: Request) {
     return NextResponse.json({ ok: false, error: message }, { status: 502 });
   }
 }
-

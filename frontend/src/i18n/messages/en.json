@@ -24,6 +24,9 @@
       "petFail": "Pet failed.",
       "petFailed": "Pet request failed.",
       "petFailedNoBalance": "Pet failed: not enough Stardust.",
+      "verifySuccess": "World ID verification completed.",
+      "verifyFailed": "World ID verification failed.",
+      "verifyMissingConfig": "World ID config is missing. Check frontend env.",
       "note": "No pay-to-win.",
       "exploreCodex": "Open Codex",
       "dailyCheckInDone": "Check-in Complete"

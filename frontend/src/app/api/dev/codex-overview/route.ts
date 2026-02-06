@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { resolveBackendAuthToken } from "@/app/api/dev/_lib/auth";
 
 type CharactersApiResponse = {
   success: boolean;
@@ -39,14 +40,14 @@ type CodexApiResponse = {
 
 export async function GET() {
   const backendApiUrl = process.env.BACKEND_API_URL;
-  const backendTestJwt = process.env.BACKEND_TEST_JWT;
+  const backendAuthToken = await resolveBackendAuthToken();
 
-  if (!backendApiUrl || !backendTestJwt) {
+  if (!backendApiUrl || !backendAuthToken) {
     return NextResponse.json(
       {
         ok: false,
         error:
-          "Missing BACKEND_API_URL or BACKEND_TEST_JWT in frontend environment.",
+          "Missing BACKEND_API_URL and no auth token was found.",
       },
       { status: 500 },
     );
@@ -61,7 +62,7 @@ export async function GET() {
       fetch(`${backendApiUrl}/api/codex/me`, {
         method: "GET",
         headers: {
-          Authorization: `Bearer ${backendTestJwt}`,
+          Authorization: `Bearer ${backendAuthToken}`,
         },
         cache: "no-store",
       }),
@@ -134,4 +135,3 @@ export async function GET() {
     return NextResponse.json({ ok: false, error: message }, { status: 502 });
   }
 }
-

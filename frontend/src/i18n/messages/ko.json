@@ -24,6 +24,9 @@
       "petFail": "터치 실패",
       "petFailed": "터치 요청에 실패했습니다.",
       "petFailedNoBalance": "터치 실패: 스타더스트가 부족합니다.",
+      "verifySuccess": "World ID 인증이 완료되었습니다.",
+      "verifyFailed": "World ID 인증에 실패했습니다.",
+      "verifyMissingConfig": "World ID 설정이 없습니다. 프론트 환경변수를 확인해주세요.",
       "note": "과금으로 승부가 갈리지 않습니다.",
       "exploreCodex": "도감 보기",
       "dailyCheckInDone": "출석 완료"

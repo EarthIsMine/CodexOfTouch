@@ -20,7 +20,8 @@
       }
     ],
     "paths": {
-      "@/*": ["./src/*"]
+      "@/*": ["./src/*"],
+      "@worldcoin/idkit": ["../backend/node_modules/@worldcoin/idkit"]
     }
   },
   "include": [

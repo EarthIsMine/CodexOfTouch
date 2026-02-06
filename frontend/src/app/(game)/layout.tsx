@@ -13,13 +13,20 @@ export default function GameLayout({ children }: { children: ReactNode }) {
   const pathname = usePathname();
   const t = useTranslations("home");
 
-  const isVerified = true;
+  const [isVerified, setIsVerified] = useState(false);
   const [activeCharacterId, setActiveCharacterId] = useState(0);
   const [cooldownSec, setCooldownSec] = useState(0);
   const [petPending, setPetPending] = useState(false);
   const [toastMessage, setToastMessage] = useState("");
   const toastTimerRef = useRef<number | null>(null);
   const isPetDisabled = !isVerified || cooldownSec > 0 || activeCharacterId <= 0;
+
+  useEffect(() => {
+    const verified = window.localStorage.getItem("world_id_verified");
+    if (verified === "1") {
+      setIsVerified(true);
+    }
+  }, []);
 
   useEffect(() => {
     let mounted = true;
@@ -142,6 +149,13 @@ export default function GameLayout({ children }: { children: ReactNode }) {
     }
   };
 
+  const handleVerificationSuccess = () => {
+    setIsVerified(true);
+    window.localStorage.setItem("world_id_verified", "1");
+    showToast(t("cta.verifySuccess"));
+    window.dispatchEvent(new CustomEvent("codex:refresh-home-stats"));
+  };
+
   return (
     <HomeBackground>
       <Container className="app-container">
@@ -168,6 +182,10 @@ export default function GameLayout({ children }: { children: ReactNode }) {
             isPetDisabled={isPetDisabled}
             onPetAction={handlePetAction}
             petPending={petPending}
+            onVerificationSuccess={handleVerificationSuccess}
+            onVerificationError={(message) =>
+              showToast(message || t("cta.verifyFailed"))
+            }
           />
         </CTAZone>
         {toastMessage ? <ToastMessage message={toastMessage} /> : null}
