@@ -4,7 +4,7 @@ import {
   IDKitWidget,
   VerificationLevel,
   type ISuccessResult,
-} from "@worldcoin/idkit/build/index.js";
+} from "@worldcoin/idkit";
 import { useState } from "react";
 import CTAButton from "@/ui/primitives/CTAButton";
 
