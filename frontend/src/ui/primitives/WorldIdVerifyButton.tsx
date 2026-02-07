@@ -51,6 +51,11 @@ export default function WorldIdVerifyButton({
       if (!response.ok || !payload.ok || !payload.data?.token) {
         throw new Error(payload.error || "World ID authentication failed.");
       }
+
+      onVerified();
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "Unknown error";
+      onError(message);
     } finally {
       setPending(false);
     }
