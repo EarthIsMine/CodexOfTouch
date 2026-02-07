@@ -13,16 +13,8 @@ type Character3DModelProps = {
 };
 
 function Character3DModel({ glbUrl, emotion }: Character3DModelProps) {
-  const [loadError, setLoadError] = useState(false);
-
-  let scene;
-  try {
-    const gltf = useGLTF(glbUrl);
-    scene = gltf.scene;
-  } catch (error) {
-    console.error("Failed to load GLB:", error);
-    setLoadError(true);
-  }
+  const gltf = useGLTF(glbUrl);
+  const scene = gltf.scene;
 
   const modelRef = useRef<THREE.Group>(null);
   const baseRotation = useRef(new THREE.Euler(0, 0, 0));
@@ -31,11 +23,7 @@ function Character3DModel({ glbUrl, emotion }: Character3DModelProps) {
   >([]);
 
   const emotionStartTime = useRef(0);
-  const [currentEmotion, setCurrentEmotion] = useState<Emotion>("neutral");
-
-  if (loadError || !scene) {
-    return null;
-  }
+  const currentEmotion = useRef<Emotion>("neutral");
 
   // Store original materials on mount
   useEffect(() => {
@@ -56,11 +44,11 @@ function Character3DModel({ glbUrl, emotion }: Character3DModelProps) {
 
   // Update emotion state when prop changes
   useEffect(() => {
-    if (emotion !== currentEmotion) {
-      setCurrentEmotion(emotion);
+    if (emotion !== currentEmotion.current) {
+      currentEmotion.current = emotion;
       emotionStartTime.current = Date.now() / 1000;
     }
-  }, [emotion, currentEmotion]);
+  }, [emotion]);
 
   useFrame((state) => {
     if (!modelRef.current) return;
@@ -73,7 +61,7 @@ function Character3DModel({ glbUrl, emotion }: Character3DModelProps) {
     const ANGRY_DURATION = 2; // 2 seconds
     const intensity = 1.0;
 
-    if (currentEmotion === "angry" && emotionElapsed < ANGRY_DURATION) {
+    if (currentEmotion.current === "angry" && emotionElapsed < ANGRY_DURATION) {
       // Angry animation: violent shaking, rotation, red color
       const angryScale = 1 + Math.sin(t * 20) * 0.1 * intensity;
 
@@ -94,7 +82,10 @@ function Character3DModel({ glbUrl, emotion }: Character3DModelProps) {
           );
         }
       });
-    } else if (currentEmotion === "happy" && emotionElapsed < HAPPY_DURATION) {
+    } else if (
+      currentEmotion.current === "happy" &&
+      emotionElapsed < HAPPY_DURATION
+    ) {
       // Happy animation: bouncing, yellow/blue color
       const happyScale = 1 + Math.sin(t * 10) * 0.05 * intensity;
 
@@ -113,8 +104,8 @@ function Character3DModel({ glbUrl, emotion }: Character3DModelProps) {
       });
     } else {
       // Neutral animation: gentle floating and breathing
-      if (currentEmotion !== "neutral" && emotionElapsed >= HAPPY_DURATION) {
-        setCurrentEmotion("neutral");
+      if (currentEmotion.current !== "neutral" && emotionElapsed >= HAPPY_DURATION) {
+        currentEmotion.current = "neutral";
       }
 
       modelRef.current.position.x = 0;
