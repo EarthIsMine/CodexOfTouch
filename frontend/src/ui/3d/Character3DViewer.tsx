@@ -13,7 +13,17 @@ type Character3DModelProps = {
 };
 
 function Character3DModel({ glbUrl, emotion }: Character3DModelProps) {
-  const { scene } = useGLTF(glbUrl);
+  const [loadError, setLoadError] = useState(false);
+
+  let scene;
+  try {
+    const gltf = useGLTF(glbUrl);
+    scene = gltf.scene;
+  } catch (error) {
+    console.error("Failed to load GLB:", error);
+    setLoadError(true);
+  }
+
   const modelRef = useRef<THREE.Group>(null);
   const baseRotation = useRef(new THREE.Euler(0, 0, 0));
   const originalMaterials = useRef<
@@ -22,6 +32,10 @@ function Character3DModel({ glbUrl, emotion }: Character3DModelProps) {
 
   const emotionStartTime = useRef(0);
   const [currentEmotion, setCurrentEmotion] = useState<Emotion>("neutral");
+
+  if (loadError || !scene) {
+    return null;
+  }
 
   // Store original materials on mount
   useEffect(() => {
@@ -132,14 +146,53 @@ export default function Character3DViewer({
   glbUrl,
   emotion = "neutral",
 }: Character3DViewerProps) {
+  const [isWebGLSupported, setIsWebGLSupported] = useState(true);
+  const [hasError, setHasError] = useState(false);
+
+  useEffect(() => {
+    // Check WebGL support for World App compatibility
+    try {
+      const canvas = document.createElement("canvas");
+      const gl =
+        canvas.getContext("webgl") ||
+        canvas.getContext("experimental-webgl");
+      if (!gl) {
+        console.warn("WebGL not supported");
+        setIsWebGLSupported(false);
+      }
+    } catch (e) {
+      console.error("WebGL check failed:", e);
+      setIsWebGLSupported(false);
+    }
+  }, []);
+
   if (!glbUrl) {
+    return null;
+  }
+
+  if (!isWebGLSupported || hasError) {
+    // Fallback: return null to show GlowBlob instead
     return null;
   }
 
   return (
     <Canvas
       camera={{ position: [0, 0, 10], fov: 50 }}
-      gl={{ alpha: true, antialias: true }}
+      gl={{
+        alpha: true,
+        antialias: true,
+        powerPreference: "high-performance",
+        failIfMajorPerformanceCaveat: false,
+      }}
+      onCreated={({ gl }) => {
+        try {
+          // Additional WebGL setup for mobile compatibility
+          gl.setClearColor(0x000000, 0);
+        } catch (e) {
+          console.error("WebGL initialization error:", e);
+          setHasError(true);
+        }
+      }}
       style={{
         position: "absolute",
         inset: 0,

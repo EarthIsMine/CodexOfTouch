@@ -2,7 +2,13 @@
 
 import styled from "@emotion/styled";
 import { useEffect, useState } from "react";
-import Character3DViewer from "@/ui/3d/Character3DViewer";
+import dynamic from "next/dynamic";
+import { ThreeErrorBoundary } from "@/ui/3d/ErrorBoundary";
+
+const Character3DViewer = dynamic(() => import("@/ui/3d/Character3DViewer"), {
+  ssr: false,
+  loading: () => null,
+});
 
 type Emotion = "neutral" | "happy" | "angry";
 
@@ -79,7 +85,15 @@ export default function CharacterStatusCard({
       <StageArea>
         <Cylinder aria-hidden>
           {characterGlbUrl ? (
-            <Character3DViewer glbUrl={characterGlbUrl} emotion={emotion} />
+            <ThreeErrorBoundary
+              fallback={
+                <CharacterCore>
+                  <GlowBlob />
+                </CharacterCore>
+              }
+            >
+              <Character3DViewer glbUrl={characterGlbUrl} emotion={emotion} />
+            </ThreeErrorBoundary>
           ) : (
             <CharacterCore>
               <GlowBlob />
