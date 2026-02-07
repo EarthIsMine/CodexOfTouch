@@ -1,12 +1,15 @@
 "use client";
 
 import styled from "@emotion/styled";
-import { useEffect, useMemo, useRef } from "react";
+import { useEffect, useState } from "react";
+import Character3DViewer from "@/ui/3d/Character3DViewer";
+
+type Emotion = "neutral" | "happy" | "angry";
 
 export type CharacterStatusCardProps = {
   title: string;
   characterName: string;
-  characterHtmlUrl?: string;
+  characterGlbUrl?: string;
   topActionLabel: string;
   topActionDisabled?: boolean;
   onTopActionClick?: () => void;
@@ -22,7 +25,7 @@ export type CharacterStatusCardProps = {
 export default function CharacterStatusCard({
   title,
   characterName,
-  characterHtmlUrl,
+  characterGlbUrl,
   topActionLabel,
   topActionDisabled = false,
   onTopActionClick,
@@ -34,41 +37,28 @@ export default function CharacterStatusCard({
   secondaryStatValue,
   hint,
 }: CharacterStatusCardProps) {
-  const viewerUrl = useMemo(() => {
-    return characterHtmlUrl || "";
-  }, [characterHtmlUrl]);
-
-  const iframeRef = useRef<HTMLIFrameElement | null>(null);
+  const [emotion, setEmotion] = useState<Emotion>("neutral");
 
   useEffect(() => {
-    if (!viewerUrl) {
-      return;
-    }
-    const origin = (() => {
-      try {
-        return new URL(viewerUrl).origin;
-      } catch {
-        return "*";
-      }
-    })();
-
     const handlePetResult = (event: Event) => {
       const detail = (event as CustomEvent<{ result?: string }>).detail;
       if (!detail?.result) {
         return;
       }
-      const mood = detail.result === "SUCCESS" ? "happy" : "angry";
-      iframeRef.current?.contentWindow?.postMessage(
-        { type: "pet-emotion", mood },
-        origin,
-      );
+      const mood: Emotion = detail.result === "SUCCESS" ? "happy" : "angry";
+      setEmotion(mood);
+
+      // Reset to neutral after animation duration
+      setTimeout(() => {
+        setEmotion("neutral");
+      }, 2000);
     };
 
     window.addEventListener("codex:pet-result", handlePetResult);
     return () => {
       window.removeEventListener("codex:pet-result", handlePetResult);
     };
-  }, [viewerUrl]);
+  }, []);
 
   return (
     <HeroCard>
@@ -88,12 +78,8 @@ export default function CharacterStatusCard({
 
       <StageArea>
         <Cylinder aria-hidden>
-          {viewerUrl ? (
-            <CharacterFrame
-              ref={iframeRef}
-              src={viewerUrl}
-              title={`${characterName} 3D Viewer`}
-            />
+          {characterGlbUrl ? (
+            <Character3DViewer glbUrl={characterGlbUrl} emotion={emotion} />
           ) : (
             <CharacterCore>
               <GlowBlob />
@@ -263,17 +249,6 @@ const GlowBlob = styled.div`
   box-shadow:
     0 0 36px rgba(63, 193, 255, 0.46),
     inset 0 -20px 30px rgba(232, 133, 72, 0.42);
-`;
-
-const CharacterFrame = styled.iframe`
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  border-radius: inherit;
-  border: 0;
-  overflow: hidden;
-  pointer-events: none;
 `;
 
 const BottomStats = styled.div`
