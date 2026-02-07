@@ -2,7 +2,7 @@
 
 import { Canvas, useFrame } from "@react-three/fiber";
 import { useGLTF } from "@react-three/drei";
-import { useRef, useEffect, useState } from "react";
+import { useRef, useEffect, useState, Suspense } from "react";
 import * as THREE from "three";
 
 type Emotion = "neutral" | "happy" | "angry";
@@ -194,7 +194,9 @@ export default function Character3DViewer({
     >
       <ambientLight intensity={0.8} />
       <directionalLight position={[5, 5, 5]} intensity={0.6} />
-      <Character3DModel glbUrl={glbUrl} emotion={emotion} />
+      <Suspense fallback={null}>
+        <Character3DModel glbUrl={glbUrl} emotion={emotion} />
+      </Suspense>
     </Canvas>
   );
 }
