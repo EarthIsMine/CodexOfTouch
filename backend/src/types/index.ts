@@ -96,6 +96,9 @@ export enum ErrorCode {
   // Character
   NO_ACTIVE_CHARACTER = 'CHAR_001',
 
+  // Assets
+  ASSET_ERROR = 'ASSET_001',
+
   // Pet
   INSUFFICIENT_BALANCE = 'PET_001',
   COOLDOWN_ACTIVE = 'PET_002',

@@ -11,7 +11,7 @@ export class UserController {
 
       return successResponse(res, { user }, 200);
     } catch (error) {
-      next(error);
+      return next(error);
     }
   }
 
@@ -22,7 +22,7 @@ export class UserController {
 
       return successResponse(res, result, 200);
     } catch (error) {
-      next(error);
+      return next(error);
     }
   }
 }

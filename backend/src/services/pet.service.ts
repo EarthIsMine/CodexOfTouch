@@ -14,7 +14,7 @@ import logger from '@/config/logger';
 import { broadcastJackpotUpdate } from '@/realtime/jackpot-ws';
 
 export class PetService {
-  async performPet(userId: string, characterId: number, skillId?: number): Promise<PetResult> {
+  async performPet(userId: string, characterId: number, _skillId?: number): Promise<PetResult> {
     // 1. Validate user balance
     const user = await userService.getUserById(userId);
     if (user.internalBalance < config.petCost) {
@@ -85,7 +85,7 @@ export class PetService {
 
     // 9. Handle result
     let codexUnlocked = false;
-    const jackpotState = await jackpotService.getJackpotState(characterId);
+    // const _jackpotState = await jackpotService.getJackpotState(characterId);
 
     if (success) {
       // Success: Update jackpot state, unlock codex

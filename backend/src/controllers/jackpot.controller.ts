@@ -5,14 +5,14 @@ import characterService from '@/services/character.service';
 import { successResponse } from '@/utils/response';
 
 export class JackpotController {
-  async getCurrentJackpot(req: AuthRequest, res: Response, next: NextFunction) {
+  async getCurrentJackpot(_req: AuthRequest, res: Response, next: NextFunction) {
     try {
       const activeCharacter = await characterService.getActiveCharacter();
       const jackpot = await jackpotService.getCurrentJackpot(activeCharacter.id);
 
       return successResponse(res, jackpot, 200);
     } catch (error) {
-      next(error);
+      return next(error);
     }
   }
 
@@ -26,7 +26,7 @@ export class JackpotController {
 
       return successResponse(res, result, 200);
     } catch (error) {
-      next(error);
+      return next(error);
     }
   }
 }

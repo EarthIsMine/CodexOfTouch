@@ -3,7 +3,7 @@ import { AuthRequest, ErrorCode } from '@/types';
 import { verifyToken } from '@/utils/jwt';
 import { AuthError } from '@/utils/errors';
 
-export const authenticate = (req: AuthRequest, res: Response, next: NextFunction) => {
+export const authenticate = (req: AuthRequest, _res: Response, next: NextFunction) => {
   try {
     const authHeader = req.headers.authorization;
 
@@ -21,7 +21,7 @@ export const authenticate = (req: AuthRequest, res: Response, next: NextFunction
   }
 };
 
-export const optionalAuth = (req: AuthRequest, res: Response, next: NextFunction) => {
+export const optionalAuth = (req: AuthRequest, _res: Response, next: NextFunction) => {
   try {
     const authHeader = req.headers.authorization;
 

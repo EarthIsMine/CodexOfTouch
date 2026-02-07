@@ -57,14 +57,14 @@ export async function createTestUser(data?: {
  */
 export async function createTestCharacter(data?: {
   name?: string;
-  imageUrl?: string;
+  assetFolder?: string;
   isActive?: boolean;
   successRate?: number;
 }) {
   return await prisma.character.create({
     data: {
       name: data?.name || 'Test Character',
-      imageUrl: data?.imageUrl || 'https://example.com/test.png',
+      assetFolder: data?.assetFolder || 'https://example.com/test.png',
       isActive: data?.isActive ?? false,
       successRate: data?.successRate ?? 0.5,
     },

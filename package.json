@@ -11,6 +11,7 @@
     "dev:frontend": "pnpm --filter @codexoftouch/frontend dev",
     "dev:backend": "pnpm --filter @codexoftouch/backend dev",
     "build": "pnpm -r build",
+    "start": "pnpm -r --parallel start",
     "lint": "pnpm -r lint",
     "typecheck": "pnpm -r typecheck"
   },

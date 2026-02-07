@@ -4,13 +4,13 @@ import skillService from '@/services/skill.service';
 import { successResponse } from '@/utils/response';
 
 export class SkillController {
-  async getAllSkills(req: AuthRequest, res: Response, next: NextFunction) {
+  async getAllSkills(_req: AuthRequest, res: Response, next: NextFunction) {
     try {
       const skills = await skillService.getAllSkills();
 
       return successResponse(res, { skills }, 200);
     } catch (error) {
-      next(error);
+      return next(error);
     }
   }
 
@@ -21,7 +21,7 @@ export class SkillController {
 
       return successResponse(res, { skills }, 200);
     } catch (error) {
-      next(error);
+      return next(error);
     }
   }
 
@@ -50,7 +50,7 @@ export class SkillController {
 
       return successResponse(res, { userSkill }, 201);
     } catch (error) {
-      next(error);
+      return next(error);
     }
   }
 
@@ -63,7 +63,7 @@ export class SkillController {
 
       return successResponse(res, result, 200);
     } catch (error) {
-      next(error);
+      return next(error);
     }
   }
 }

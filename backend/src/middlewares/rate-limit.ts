@@ -8,7 +8,7 @@ export const generalRateLimit = rateLimit({
   max: config.rateLimitMaxRequests,
   standardHeaders: true,
   legacyHeaders: false,
-  handler: (req, res) => {
+  handler: (_req, res) => {
     const retryAfter = Math.ceil(config.rateLimitWindow / 1000);
     return errorResponse(res, ErrorCode.RATE_LIMIT, 'Too many requests', 429, { retryAfter });
   },
@@ -23,7 +23,7 @@ export const petRateLimit = rateLimit({
     // Rate limit per user
     return req.userId || req.ip;
   },
-  handler: (req, res) => {
+  handler: (_req, res) => {
     const retryAfter = Math.ceil(config.rateLimitWindow / 1000);
     return errorResponse(res, ErrorCode.RATE_LIMIT, 'Too many pet requests', 429, { retryAfter });
   },
@@ -37,7 +37,7 @@ export const skillRateLimit = rateLimit({
   keyGenerator: (req: any) => {
     return req.userId || req.ip;
   },
-  handler: (req, res) => {
+  handler: (_req, res) => {
     const retryAfter = Math.ceil(config.rateLimitWindow / 1000);
     return errorResponse(res, ErrorCode.RATE_LIMIT, 'Too many skill requests', 429, { retryAfter });
   },

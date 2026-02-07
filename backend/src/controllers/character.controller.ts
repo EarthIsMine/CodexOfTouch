@@ -59,7 +59,7 @@ export class CharacterController {
 
       return successResponse(res, responseData, 200);
     } catch (error) {
-      next(error);
+      return next(error);
     }
   }
 
@@ -99,7 +99,7 @@ export class CharacterController {
 
       return successResponse(res, { characters: charactersWithStats }, 200);
     } catch (error) {
-      next(error);
+      return next(error);
     }
   }
 }

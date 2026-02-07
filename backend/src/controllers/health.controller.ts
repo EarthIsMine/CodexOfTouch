@@ -4,7 +4,7 @@ import redis from '@/config/redis';
 import { successResponse } from '@/utils/response';
 
 export class HealthController {
-  async check(req: Request, res: Response, next: NextFunction) {
+  async check(_req: Request, res: Response, next: NextFunction) {
     try {
       const services: any = {};
 
@@ -39,7 +39,7 @@ export class HealthController {
         allHealthy ? 200 : 503
       );
     } catch (error) {
-      next(error);
+      return next(error);
     }
   }
 }

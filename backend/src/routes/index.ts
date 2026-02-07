@@ -12,7 +12,7 @@ import assetsRoutes from './assets.routes';
 const router: Router = Router();
 
 // API Root - Show available endpoints
-router.get('/', (req, res) => {
+router.get('/', (_req, res) => {
   res.json({
     success: true,
     data: {

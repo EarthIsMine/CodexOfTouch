@@ -11,7 +11,7 @@ export class AuthController {
 
       return successResponse(res, result, 200);
     } catch (error) {
-      next(error);
+      return next(error);
     }
   }
 }
